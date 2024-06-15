@@ -12,6 +12,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Forms\Components\Section;
 
 class GroupResource extends Resource
 {
@@ -19,22 +20,35 @@ class GroupResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    protected static ?string $modelLabel = 'Gruppe';
+    protected static ?string $pluralModelLabel = 'Gruppen';
+
+    protected static ?string $recordTitleAttribute = 'name';
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->required(),
-                Forms\Components\TextInput::make('description'),
-                Forms\Components\Toggle::make('moderated'),
-                Forms\Components\Toggle::make('has_mailinglist'),
-                Forms\Components\Toggle::make('has_keycloakgroup'),
-                Forms\Components\TextInput::make('mailinglisturl'),
-                Forms\Components\TextInput::make('mailinglistpassword')
-                    ->password(),
-                Forms\Components\TextInput::make('keycloakgroup'),
-                Forms\Components\TextInput::make('keycloakadmingroup'),
-            ]);
+                    Forms\Components\TextInput::make('name')
+                        ->required(),
+                    Forms\Components\TextInput::make('description')
+                        ->columnSpan(2)
+                        ->label("Beschreibung"),
+                    Forms\Components\Toggle::make('moderated')
+                        ->columnSpanFull()
+                        ->label("Gruppe ist moderiert"),
+                    Forms\Components\Toggle::make('has_mailinglist')
+                        ->label("Hat eine Mailingliste"),
+                        Forms\Components\TextInput::make('mailinglisturl')
+                        ->label("Mailinglisten-URL"),
+                    Forms\Components\TextInput::make('mailinglistpassword')
+                        ->label("Mailinglisten-Passwort")
+                        ->password(),
+                    Forms\Components\Toggle::make('has_keycloakgroup')
+                        ->label("Hat eine Keycloak-Gruppe"),
+                    Forms\Components\TextInput::make('keycloakgroup'),
+                    Forms\Components\TextInput::make('keycloakadmingroup'),
+            ])->columns(3);
     }
 
     public static function table(Table $table): Table
@@ -56,18 +70,25 @@ class GroupResource extends Resource
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('description')
-                    ->searchable(),
+                    ->searchable()
+                    ->label("Beschreibung"),
                 Tables\Columns\IconColumn::make('moderated')
+                    ->label("moderiert")
                     ->boolean(),
                 Tables\Columns\IconColumn::make('has_mailinglist')
+                    ->label("Mailingliste")
                     ->boolean(),
                 Tables\Columns\IconColumn::make('has_keycloakgroup')
+                    ->label("Keycloak-Gruppe")
                     ->boolean(),
                 Tables\Columns\TextColumn::make('mailinglisturl')
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
                 Tables\Columns\TextColumn::make('keycloakgroup')
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
                 Tables\Columns\TextColumn::make('keycloakadmingroup')
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
             ])
             ->filters([
@@ -89,7 +110,7 @@ class GroupResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\GroupmembersRelationManager::class,
         ];
     }
 

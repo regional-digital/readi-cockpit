@@ -13,6 +13,13 @@ class Groupmember extends Model
     use HasFactory;
     use SoftDeletes;
 
+    protected $fillable = [
+        "email",
+        "waitingforjoin",
+        "tobeinkeycloak",
+        "tobeinmailinglist"
+    ];
+
     public function group(): HasOne
     {
         return $this->hasOne(Group::class);
