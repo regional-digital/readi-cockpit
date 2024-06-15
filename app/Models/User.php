@@ -10,6 +10,8 @@ use Illuminate\Notifications\Notifiable;
 class User extends Authenticatable
 {
     use HasFactory, Notifiable;
+    use Heloufir\FilamentKeycloakSso\Helpers\HasKeycloakRoles;
+    use HasKeycloakRoles;
 
     /**
      * The attributes that are mass assignable.
