@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string("mailinglisturl")->nullable();
             $table->string("mailinglistpassword")->nullable();
             $table->string("keycloakgroup")->nullable();
-            $table->string("keycloakadmingroup")->nullable();
+            $table->string("keycloakadminrole")->nullable();
         });
     }
 

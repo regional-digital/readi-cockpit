@@ -13,6 +13,9 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Forms\Components\Section;
+use Illuminate\Support\Facades\Auth;
+use App\KeycloakHelper;
+use Illuminate\Database\Eloquent\Model;
 
 class GroupResource extends Resource
 {
@@ -39,16 +42,17 @@ class GroupResource extends Resource
                         ->label("Gruppe ist moderiert"),
                     Forms\Components\Toggle::make('has_mailinglist')
                         ->label("Hat eine Mailingliste"),
-                        Forms\Components\TextInput::make('mailinglisturl')
+                    Forms\Components\TextInput::make('mailinglisturl')
                         ->label("Mailinglisten-URL"),
                     Forms\Components\TextInput::make('mailinglistpassword')
                         ->label("Mailinglisten-Passwort")
                         ->password(),
                     Forms\Components\Toggle::make('has_keycloakgroup')
                         ->label("Hat eine Keycloak-Gruppe"),
-                    Forms\Components\TextInput::make('keycloakgroup'),
-                    Forms\Components\TextInput::make('keycloakadmingroup'),
-            ])->columns(3);
+                    Forms\Components\Select::make('keycloakgroup')
+                        ->options(KeycloakHelper::get_keycloakgroupselectoptions()),
+                    Forms\Components\TextInput::make('keycloakadminrole'),
+                ])->columns(3);
     }
 
     public static function table(Table $table): Table
@@ -87,7 +91,7 @@ class GroupResource extends Resource
                 Tables\Columns\TextColumn::make('keycloakgroup')
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
-                Tables\Columns\TextColumn::make('keycloakadmingroup')
+                Tables\Columns\TextColumn::make('keycloakadminrole')
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
             ])
@@ -96,8 +100,8 @@ class GroupResource extends Resource
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
-            ])
+                Tables\Actions\EditAction::make()
+                ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
