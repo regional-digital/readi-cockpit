@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Models\Group;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use App\Observers\GroupmemberObserver;
@@ -23,8 +24,8 @@ class Groupmember extends Model
         "tobeinmailinglist"
     ];
 
-    public function group(): HasOne
+    public function group(): BelongsTo
     {
-        return $this->hasOne(Group::class);
+        return $this->BelongsTo(Group::class);
     }
 }

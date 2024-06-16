@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use App\Models\Groupmember;
+use App\KeycloakHelper;
 
 class GroupmemberObserver
 {
@@ -19,7 +20,8 @@ class GroupmemberObserver
      */
     public function updated(Groupmember $groupmember): void
     {
-        //
+        $KeycloakHelper = new KeycloakHelper();
+        $KeycloakHelper::update_membership($groupmember);
     }
 
     /**

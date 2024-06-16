@@ -39,11 +39,18 @@ class GroupmembersRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('email')
                     ->label("E-Mail"),
                 Tables\Columns\ToggleColumn::make('tobeinkeycloak')
-                    ->label('Keycloak'),
+                    ->label('Keycloak')
+                    ->visible(function() {
+                        return $this->getOwnerRecord()->has_keycloakgroup;
+                    }),
                 Tables\Columns\ToggleColumn::make('tobeinmailinglist')
-                    ->label('Mailingliste'),
+                    ->label('Mailingliste')
+                    ->visible(function() {
+                        return $this->getOwnerRecord()->has_mailinglist;
+                    }),
                 Tables\Columns\ToggleColumn::make('waitingforjoin')
-                    ->label('wartet auf Beitrit')->visible(function() {
+                    ->label('wartet auf Beitrit')
+                    ->visible(function() {
                         return $this->getOwnerRecord()->moderated;
                     }),
                 ])

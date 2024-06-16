@@ -22,6 +22,7 @@ class Group extends Model
         , "has_mailinglist"
         , "has_keycloakgroup"
         , "mailinglisturl"
+        , "mailinglistpassword"
         , "keycloakgroup"
         , "keycloakadminrole"
         , "mailinglistpassword"
@@ -39,11 +40,6 @@ class Group extends Model
     public function groupmembers(): HasMany
     {
         return $this->hasMany(Groupmember::class);
-    }
-
-    public function updateGroupmembers()
-    {
-        //
     }
 
 }

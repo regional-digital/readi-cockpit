@@ -48,12 +48,12 @@ class GroupResource extends Resource
                         ->requiredIf('has_mailinglist', true),
                     Forms\Components\TextInput::make('mailinglistpassword')
                         ->label("Mailinglisten-Passwort")
-                        ->requiredIf('has_mailinglist', true)
+                        ->dehydrated(fn ($state) => filled($state))
                         ->password(),
                     Forms\Components\Toggle::make('has_keycloakgroup')
                         ->label("Hat eine Keycloak-Gruppe"),
                     Forms\Components\Select::make('keycloakgroup')
-                        ->options(KeycloakHelper::get_keycloakgroupselectoptions())
+                        ->options(KeycloakHelper::get_groupselectoptions())
                         ->requiredIf('has_keycloakgroup', true),
                     Forms\Components\TextInput::make('keycloakadminrole')
                         ->requiredIf('has_keycloakgroup', true),
