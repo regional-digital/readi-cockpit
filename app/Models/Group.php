@@ -6,7 +6,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use App\Observers\GroupObserver;
 
+#[ObservedBy([GroupObserver::class])]
 class Group extends Model
 {
     use HasFactory;
@@ -36,6 +39,11 @@ class Group extends Model
     public function groupmembers(): HasMany
     {
         return $this->hasMany(Groupmember::class);
+    }
+
+    public function updateGroupmembers()
+    {
+        //
     }
 
 }

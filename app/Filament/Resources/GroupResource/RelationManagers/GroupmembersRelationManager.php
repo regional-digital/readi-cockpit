@@ -9,6 +9,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Database\Eloquent\Model;
 
 class GroupmembersRelationManager extends RelationManager
 {
@@ -26,8 +27,8 @@ class GroupmembersRelationManager extends RelationManager
                 Forms\Components\Toggle::make('tobeinmailinglist')
                     ->label("Mailingliste"),
                 Forms\Components\Toggle::make('waitingforjoin')
-                    ->label("Wartet auf Beitrit"),
-            ]);
+                    ->label("Wartet auf Beitritt"),
+            ])->columns(1);
     }
 
     public function table(Table $table): Table
@@ -37,15 +38,14 @@ class GroupmembersRelationManager extends RelationManager
             ->columns([
                 Tables\Columns\TextColumn::make('email')
                     ->label("E-Mail"),
-                Tables\Columns\IconColumn::make('waitingforjoin')
-                    ->label('wartet')
-                    ->boolean(),
-                Tables\Columns\IconColumn::make('tobeinkeycloak')
-                    ->label('Keycloak')
-                    ->boolean(),
-                Tables\Columns\IconColumn::make('tobeinmailinglist')
-                    ->label('Mailingliste')
-                    ->boolean(),
+                Tables\Columns\ToggleColumn::make('tobeinkeycloak')
+                    ->label('Keycloak'),
+                Tables\Columns\ToggleColumn::make('tobeinmailinglist')
+                    ->label('Mailingliste'),
+                Tables\Columns\ToggleColumn::make('waitingforjoin')
+                    ->label('wartet auf Beitrit')->visible(function() {
+                        return $this->getOwnerRecord()->moderated;
+                    }),
                 ])
             ->filters([
                 Tables\Filters\TrashedFilter::make()
@@ -54,7 +54,6 @@ class GroupmembersRelationManager extends RelationManager
                 Tables\Actions\CreateAction::make(),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
                 Tables\Actions\ForceDeleteAction::make(),
                 Tables\Actions\RestoreAction::make(),

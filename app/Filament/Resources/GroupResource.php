@@ -16,6 +16,7 @@ use Filament\Forms\Components\Section;
 use Illuminate\Support\Facades\Auth;
 use App\KeycloakHelper;
 use Illuminate\Database\Eloquent\Model;
+use Livewire\Component as Livewire;
 
 class GroupResource extends Resource
 {
@@ -43,15 +44,19 @@ class GroupResource extends Resource
                     Forms\Components\Toggle::make('has_mailinglist')
                         ->label("Hat eine Mailingliste"),
                     Forms\Components\TextInput::make('mailinglisturl')
-                        ->label("Mailinglisten-URL"),
+                        ->label("Mailinglisten-URL")
+                        ->requiredIf('has_mailinglist', true),
                     Forms\Components\TextInput::make('mailinglistpassword')
                         ->label("Mailinglisten-Passwort")
+                        ->requiredIf('has_mailinglist', true)
                         ->password(),
                     Forms\Components\Toggle::make('has_keycloakgroup')
                         ->label("Hat eine Keycloak-Gruppe"),
                     Forms\Components\Select::make('keycloakgroup')
-                        ->options(KeycloakHelper::get_keycloakgroupselectoptions()),
-                    Forms\Components\TextInput::make('keycloakadminrole'),
+                        ->options(KeycloakHelper::get_keycloakgroupselectoptions())
+                        ->requiredIf('has_keycloakgroup', true),
+                    Forms\Components\TextInput::make('keycloakadminrole')
+                        ->requiredIf('has_keycloakgroup', true),
                 ])->columns(3);
     }
 
