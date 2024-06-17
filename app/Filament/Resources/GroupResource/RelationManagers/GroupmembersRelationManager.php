@@ -15,6 +15,8 @@ class GroupmembersRelationManager extends RelationManager
 {
     protected static string $relationship = 'Groupmembers';
 
+    protected $listeners = ['refreshRelations' => '$refresh'];
+
     public function form(Form $form): Form
     {
         return $form
