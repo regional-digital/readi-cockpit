@@ -6,6 +6,9 @@ use App\Models\Group;
 
 class KeycloakHelper {
 
+    private Client $client;
+    private array $headers;
+
     private function connect()
     {
         if(!isset($this->client)) {
@@ -76,23 +79,22 @@ class KeycloakHelper {
         else return $kc_user_id;
     }
 
-    public static function update_membership(Groupmember $groupmember) {
-        $KeycloakHelper = new KeycloakHelper();
-        $KeycloakHelper->connect();
+    public function update_membership(Groupmember $groupmember) {
+        $this->connect();
 
         $group = $groupmember->group;
         $kc_groupid = $group->keycloakgroup;
         $email = $groupmember->email;
 
-        $kc_user_id = $KeycloakHelper->get_useridbymail($email);
+        $kc_user_id = $this->get_useridbymail($email);
         if($kc_user_id === false) return false;
-        $groupmembers = $KeycloakHelper->get_groupmembers($group);
+        $groupmembers = $this->get_groupmembers($group);
 
         if(!in_array($email, $groupmembers) && $groupmember->tobeinkeycloak) {
-            $KeycloakHelper->client->request('PUT', env('KEYCLOAK_BASE_URL').'/admin/realms/'.env('KEYCLOAK_REALM').'/users/'.$kc_user_id.'/groups/'.$kc_groupid, ['headers' => $KeycloakHelper->headers]);
+            $this->client->request('PUT', env('KEYCLOAK_BASE_URL').'/admin/realms/'.env('KEYCLOAK_REALM').'/users/'.$kc_user_id.'/groups/'.$kc_groupid, ['headers' => $this->headers]);
         }
         elseif (in_array($email, $groupmembers) && !$groupmember->tobeinkeycloak) {
-            $KeycloakHelper->client->delete(env('KEYCLOAK_BASE_URL').'/admin/realms/'.env('KEYCLOAK_REALM').'/users/'.$kc_user_id.'/groups/'.$kc_groupid, ['headers' => $KeycloakHelper->headers]);
+            $this->client->delete(env('KEYCLOAK_BASE_URL').'/admin/realms/'.env('KEYCLOAK_REALM').'/users/'.$kc_user_id.'/groups/'.$kc_groupid, ['headers' => $this->headers]);
         }
         else {
             return false;
