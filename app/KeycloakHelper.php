@@ -3,6 +3,7 @@ namespace App;
 use GuzzleHttp\Client;
 use App\Models\Groupmember;
 use App\Models\Group;
+use Illuminate\Support\Facades\Auth;
 
 class KeycloakHelper {
 
@@ -64,6 +65,19 @@ class KeycloakHelper {
         return $groupmembers;
     }
 
+    public function is_groupadmin(Group $group, String $email): bool
+    {
+        $this->connect();
+        $kc_admingroup = $group->keycloakadmingroup;
+        $kc_user = $this->get_useridbymail($email);
+        $res = $this->client->request('GET', env('KEYCLOAK_BASE_URL')."/admin/realms/".env('KEYCLOAK_REALM')."/users/$kc_user/groups", ['headers' => $this->headers]);
+        $kc_groups = json_decode($res->getBody());
+        foreach($kc_groups as $kc_group) {
+            if($kc_group == $kc_admingroup) return true;
+        }
+        return false;
+    }
+
     private function get_useridbymail($email) {
         $this->connect();
         $res = $this->client->request('GET', env('KEYCLOAK_BASE_URL').'/admin/realms/'.env('KEYCLOAK_REALM').'/users?email='.$email, ['headers' => $this->headers]);
@@ -114,6 +128,9 @@ class KeycloakHelper {
         }
         return $foundKcUser;
     }
+
+
+
 
 
 

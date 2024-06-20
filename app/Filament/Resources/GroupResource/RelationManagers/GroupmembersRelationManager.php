@@ -13,6 +13,8 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Database\Eloquent\Model;
 use App\KeycloakHelper;
 use App\MailmanHelper;
+use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 
 class GroupmembersRelationManager extends RelationManager
 {
@@ -42,7 +44,8 @@ class GroupmembersRelationManager extends RelationManager
             ->recordTitleAttribute('email')
             ->columns([
                 Tables\Columns\TextColumn::make('email')
-                    ->label("E-Mail"),
+                    ->label("E-Mail")
+                    ->sortable(),
                 Tables\Columns\ToggleColumn::make('tobeinkeycloak')
                     ->label('Keycloak')
                     ->tooltip(function (Model $record) {
@@ -52,18 +55,34 @@ class GroupmembersRelationManager extends RelationManager
                         }
                         else return "";
                     })
-                    ->visible(function() {
-                        return $this->getOwnerRecord()->has_keycloakgroup;
-                    })
+                    ->searchable()
                     ->disabled(function (Model $record): bool
                     {
                         $keycloakhelper = new KeycloakHelper();
-                        return !$keycloakhelper->user_exists($record->email);
+                        $user = User::first('email', Auth::user());
+                        if(!$keycloakhelper->user_exists($record->email)) return true;
+                        if(!in_array("Administrator", $user->roles()) && !$keycloakhelper->is_groupadmin($this->getOwnerRecord(), $user->email) && $user->email !== $record->email) {
+                            return true;
+                        }
+                        else {
+                            return false;
+                        }
                     }),
                 Tables\Columns\ToggleColumn::make('tobeinmailinglist')
                     ->label('Mailingliste')
                     ->visible(function() {
                         return $this->getOwnerRecord()->has_mailinglist;
+                    })
+                    ->disabled(function(Model $record): bool
+                    {
+                        $keycloakhelper = new KeycloakHelper();
+                        $user = User::first('email', Auth::user());
+                        if(!in_array("Administrator", $user->roles()) && !$keycloakhelper->is_groupadmin($this->getOwnerRecord(), $user->email) && $user->email !== $record->email) {
+                            return true;
+                        }
+                        else {
+                            return false;
+                        }
                     }),
                 Tables\Columns\ToggleColumn::make('waitingforjoin')
                     ->label('wartet auf Beitrit')
@@ -91,6 +110,7 @@ class GroupmembersRelationManager extends RelationManager
             ])
             ->modifyQueryUsing(fn (Builder $query) => $query->withoutGlobalScopes([
                 SoftDeletingScope::class,
-            ]));
+            ]))
+            ->defaultSort("email");
     }
 }
