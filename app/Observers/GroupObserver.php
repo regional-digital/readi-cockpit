@@ -3,7 +3,6 @@
 namespace App\Observers;
 
 use App\Models\Group;
-use Illuminate\Http\Request;
 
 class GroupObserver
 {
@@ -49,6 +48,6 @@ class GroupObserver
 
     public function retrieved(Group $group): void
     {
-        //dd($group);
+        $group->updateGroupMembers();
     }
 }

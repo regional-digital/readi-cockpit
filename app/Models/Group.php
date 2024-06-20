@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use App\Observers\GroupObserver;
 use Illuminate\Support\Facades\Auth;
+use App\KeycloakHelper;
+use App\MailmanHelper;
 
 #[ObservedBy([GroupObserver::class])]
 class Group extends Model
@@ -66,6 +68,35 @@ class Group extends Model
         if($this->is_groupmember($email)) {
             Groupmember::where("email", $email)->first()->delete();
         }
+    }
+
+    public function updateGroupMembers() {
+        $keycloakHelper = new KeycloakHelper();
+        $kc_groupmembers = $keycloakHelper->get_groupmembers($this);
+
+        $mailmanhelper = new MailmanHelper();
+        $mailman_groupmembers = $mailmanhelper->get_mailmanmembers($this);
+
+        $this->groupmembers;
+
+        foreach($this->groupmembers as $groupmember) {
+            $groupmemberChanged = false;
+            if(!in_array($groupmember->email, $kc_groupmembers) && $groupmember->tobeinkeycloak == true) {
+                $groupmember->tobeinkeycloak = false;
+                $groupmemberChanged = true;
+            }
+
+            if(!in_array($groupmember->email, $mailman_groupmembers) && $groupmember->tobeinmailman == true) {
+                $groupmember->tobeinmailman = false;
+                $groupmemberChanged = true;
+            }
+
+            if($groupmemberChanged) {
+                $groupmember->save();
+            }
+        }
+
+
     }
 
 }

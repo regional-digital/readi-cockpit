@@ -4,7 +4,7 @@ use App\Models\Groupmember;
 use App\Models\Group;
 use splattner\MailmanAPI\mailmanAPI;
 
-class Mailmanhelper {
+class MailmanHelper {
     public function get_mailmanmembers(Group $group): array
     {
         $mailmanapi = new MailmanAPI($group->mailinglisturl, $group->mailinglistpassword);

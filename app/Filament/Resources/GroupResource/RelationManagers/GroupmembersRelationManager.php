@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\GroupResource\RelationManagers;
 
+use App\Models\Groupmember;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -10,6 +11,8 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Database\Eloquent\Model;
+use App\KeycloakHelper;
+use App\MailmanHelper;
 
 class GroupmembersRelationManager extends RelationManager
 {
@@ -42,8 +45,20 @@ class GroupmembersRelationManager extends RelationManager
                     ->label("E-Mail"),
                 Tables\Columns\ToggleColumn::make('tobeinkeycloak')
                     ->label('Keycloak')
+                    ->tooltip(function (Model $record) {
+                        $keycloakhelper = new KeycloakHelper();
+                        if(!$keycloakhelper->user_exists($record->email)) {
+                            return "Deaktiviert, weil der Benutzer im Keycloak nicht existiert";
+                        }
+                        else return "";
+                    })
                     ->visible(function() {
                         return $this->getOwnerRecord()->has_keycloakgroup;
+                    })
+                    ->disabled(function (Model $record): bool
+                    {
+                        $keycloakhelper = new KeycloakHelper();
+                        return !$keycloakhelper->user_exists($record->email);
                     }),
                 Tables\Columns\ToggleColumn::make('tobeinmailinglist')
                     ->label('Mailingliste')

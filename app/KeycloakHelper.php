@@ -50,7 +50,7 @@ class KeycloakHelper {
         return $groups;
     }
 
-    private function get_groupmembers(Group $group)
+    public function get_groupmembers(Group $group)
     {
         $this->connect();
         $kc_group = $group->keycloakgroup;
@@ -101,6 +101,20 @@ class KeycloakHelper {
         }
         return true;
     }
+
+    public function user_exists($email) {
+        $this->connect();
+        $res = $this->client->request('GET', env('KEYCLOAK_BASE_URL').'/admin/realms/'.env('KEYCLOAK_REALM').'/users?email='.$email, ['headers' => $this->headers]);
+        $kc_users = json_decode($res->getBody());
+        $foundKcUser = false;
+        foreach($kc_users as $kc_user) {
+            if($kc_user->email == $email) {
+                $foundKcUser = true;
+            }
+        }
+        return $foundKcUser;
+    }
+
 
 
 
