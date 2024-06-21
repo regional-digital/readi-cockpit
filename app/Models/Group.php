@@ -58,7 +58,9 @@ class Group extends Model
     public function joinGroup() {
         $email = Auth::user()->email;
         if(!$this->is_groupmember($email)) {
-            $groupmember = new Groupmember(["email" => $email]);
+            if($this->moderated) $waitingforjoin = true;
+            else $waitingforjoin = false;
+            $groupmember = new Groupmember(["email" => $email, 'waitingforjoin' => $waitingforjoin]);
             $this->groupmembers()->save($groupmember);
         }
     }
