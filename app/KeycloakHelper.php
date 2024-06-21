@@ -18,7 +18,7 @@ class KeycloakHelper {
         }
         if(!isset($this->access_token)) {
             $token_age = time() - session('keycloakhelpder_access_token_age', 0);
-            if(session()->missing('keycloakhelpder_access_token') || $token_age > 5) {
+            if(session()->missing('keycloakhelpder_access_token') || $token_age > 30) {
                 $res = $this->client->request('POST', env('KEYCLOAK_BASE_URL').'/realms/'.env('KEYCLOAK_REALM').'/protocol/openid-connect/token', [
                     'form_params' => [
                         'client_id' => 'admin-cli'
