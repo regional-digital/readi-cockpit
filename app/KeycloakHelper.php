@@ -68,12 +68,12 @@ class KeycloakHelper {
     public function is_groupadmin(Group $group, String $email): bool
     {
         $this->connect();
-        $kc_admingroup = $group->keycloakadmingroup;
+        $kc_admingroup = $group->keycloakadminrole;
         $kc_user = $this->get_useridbymail($email);
         $res = $this->client->request('GET', env('KEYCLOAK_BASE_URL')."/admin/realms/".env('KEYCLOAK_REALM')."/users/$kc_user/groups", ['headers' => $this->headers]);
         $kc_groups = json_decode($res->getBody());
         foreach($kc_groups as $kc_group) {
-            if($kc_group == $kc_admingroup) return true;
+            if($kc_group->name == $kc_admingroup) return true;
         }
         return false;
     }

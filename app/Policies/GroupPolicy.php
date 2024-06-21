@@ -6,7 +6,6 @@ use App\KeycloakHelper;
 use App\Models\Group;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
-use Illuminate\Support\Facades\Auth;
 
 class GroupPolicy
 {
@@ -41,7 +40,7 @@ class GroupPolicy
     public function update(User $user, Group $group): bool
     {
         $keycloakhelper = new KeycloakHelper();
-        if(in_array("Administrator", $user->roles()) || $keycloakhelper->is_groupadmin($group, Auth::user()->email)) return true;
+        if(in_array("Administrator", $user->roles()) || $keycloakhelper->is_groupadmin($group, $user->email)) return true;
         else return false;
     }
 

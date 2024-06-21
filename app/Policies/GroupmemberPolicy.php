@@ -38,14 +38,12 @@ class GroupmemberPolicy
      */
     public function update(User $user, Groupmember $groupmember): bool
     {
-        return false;
         $keycloakhelper = new KeycloakHelper();
         if(!in_array("Administrator", $user->roles()) && !$keycloakhelper->is_groupadmin($groupmember->group, $user->email) && $user->email !== $groupmember->email) {
-            return Response::deny();
+            return false;
         }
         else {
-            if($user->email == "groupmember@example.com") Response::allow($groupmember->email);
-            return Response::allow();
+            return true;
         }
     }
 
@@ -55,8 +53,12 @@ class GroupmemberPolicy
     public function delete(User $user, Groupmember $groupmember): bool
     {
         $keycloakhelper = new KeycloakHelper();
-        if(in_array("Administrator", $user->roles()) || $keycloakhelper->is_groupadmin($groupmember->group, $user()->email || $user->email == $groupmember->email)) return true;
-        else return false;
+        if($user->email == $groupmember->email || in_array("Administrator", $user->roles()) || $keycloakhelper->is_groupadmin($groupmember->group, $user->email)) {
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 
     /**

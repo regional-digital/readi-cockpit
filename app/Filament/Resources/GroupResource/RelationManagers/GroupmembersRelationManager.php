@@ -59,7 +59,7 @@ class GroupmembersRelationManager extends RelationManager
                     ->disabled(function (Model $record): bool
                     {
                         $keycloakhelper = new KeycloakHelper();
-                        $user = User::first('email', Auth::user());
+                        $user = User::where('email', Auth::user()->email)->first();
                         if(!$keycloakhelper->user_exists($record->email)) return true;
                         if(!in_array("Administrator", $user->roles()) && !$keycloakhelper->is_groupadmin($this->getOwnerRecord(), $user->email) && $user->email !== $record->email) {
                             return true;
@@ -76,7 +76,7 @@ class GroupmembersRelationManager extends RelationManager
                     ->disabled(function(Model $record): bool
                     {
                         $keycloakhelper = new KeycloakHelper();
-                        $user = User::first('email', Auth::user());
+                        $user = User::where('email', Auth::user()->email)->first();
                         if(!in_array("Administrator", $user->roles()) && !$keycloakhelper->is_groupadmin($this->getOwnerRecord(), $user->email) && $user->email !== $record->email) {
                             return true;
                         }
