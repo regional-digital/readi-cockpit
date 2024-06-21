@@ -85,9 +85,17 @@ class Group extends Model
                 $groupmember->tobeinkeycloak = false;
                 $groupmemberChanged = true;
             }
+            if(in_array($groupmember->email, $kc_groupmembers) && $groupmember->tobeinkeycloak == false) {
+                $groupmember->tobeinkeycloak = true;
+                $groupmemberChanged = true;
+            }
 
             if(!in_array($groupmember->email, $mailman_groupmembers) && $groupmember->tobeinmailman == true) {
                 $groupmember->tobeinmailman = false;
+                $groupmemberChanged = true;
+            }
+            if(in_array($groupmember->email, $mailman_groupmembers) && $groupmember->tobeinmailman == false) {
+                $groupmember->tobeinmailman = true;
                 $groupmemberChanged = true;
             }
 
