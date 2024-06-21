@@ -11,7 +11,7 @@ class GroupmemberObserver
     /**
      * Handle the Groupmember "updated" event.
      */
-    public function updated(Groupmember $groupmember): void
+    public function update(Groupmember $groupmember): void
     {
 
         if ($groupmember->tobeinkeycloak != $groupmember->getOriginal('tobeinkeycloak')) {
