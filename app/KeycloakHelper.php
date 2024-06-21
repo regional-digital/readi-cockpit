@@ -9,22 +9,34 @@ class KeycloakHelper {
 
     private Client $client;
     private array $headers;
+    private string $access_token;
 
     private function connect()
     {
         if(!isset($this->client)) {
             $this->client = new Client();
-            $res = $this->client->request('POST', env('KEYCLOAK_BASE_URL').'/realms/'.env('KEYCLOAK_REALM').'/protocol/openid-connect/token', [
-                'form_params' => [
-                    'client_id' => 'admin-cli'
-                    , 'username' => env('KEYCLOAK_API_USER')
-                    , 'password' => env('KEYCLOAK_API_PASSWORD')
-                    , 'grant_type' => 'password'
-                    , 'scope' => 'openid'
-                ]
-            ]);
-            $access_token = json_decode($res->getBody())->access_token;
-            $this->headers = ['Authorization' => "bearer {$access_token}"];
+        }
+        if(!isset($this->access_token)) {
+            $token_age = time() - session('keycloakhelpder_access_token_age', 0);
+            if(session()->missing('keycloakhelpder_access_token') || $token_age > 5) {
+                $res = $this->client->request('POST', env('KEYCLOAK_BASE_URL').'/realms/'.env('KEYCLOAK_REALM').'/protocol/openid-connect/token', [
+                    'form_params' => [
+                        'client_id' => 'admin-cli'
+                        , 'username' => env('KEYCLOAK_API_USER')
+                        , 'password' => env('KEYCLOAK_API_PASSWORD')
+                        , 'grant_type' => 'password'
+                        , 'scope' => 'openid'
+                    ]
+                ]);
+                $this->access_token = json_decode($res->getBody())->access_token;
+                session(['keycloakhelpder_access_token' => $this->access_token]);
+                session(['keycloakhelpder_access_token_age' => time()]);
+            } else {
+                $this->access_token = session('keycloakhelpder_access_token');
+            }
+        }
+        if(!isset($this->headers)) {
+            $this->headers = ['Authorization' => "bearer {$this->access_token}"];
         }
     }
 
