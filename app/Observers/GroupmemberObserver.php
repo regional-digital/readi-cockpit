@@ -13,11 +13,16 @@ class GroupmemberObserver
      */
     public function updated(Groupmember $groupmember): void
     {
-        $KeycloakHelper = new KeycloakHelper();
-        $KeycloakHelper->update_membership($groupmember);
 
-        $MailmanHelper = new MailmanHelper();
-        $MailmanHelper->update_membership($groupmember);
+        if ($groupmember->tobeinkeycloak != $groupmember->getOriginal('tobeinkeycloak')) {
+            $KeycloakHelper = new KeycloakHelper();
+            $KeycloakHelper->update_membership($groupmember);
+        }
+        if ($groupmember->tobeinmailman != $groupmember->getOriginal('tobeinmailman')) {
+            $MailmanHelper = new MailmanHelper();
+            $MailmanHelper->update_membership($groupmember);
+        }
+
     }
 
 }
