@@ -59,6 +59,19 @@ class ViewGroup extends ViewRecord
                 ->modalSubmitActionLabel('Ja')
                 ->modalCancelActionLabel('Nein')
                 ->slideOver(),
+            Actions\Action::make('Email')
+                ->icon('heroicon-m-envelope-open')
+                ->button()
+                ->url(function(Group $group) {
+                    $mailto = [];
+                    $groupmembers = $group->groupmembers;
+                    foreach($groupmembers as $groupmember) {
+                        if($groupmember->waitingforjoin) continue;
+                        array_push($mailto, $groupmember->email);
+                    }
+                    $url = "mailto:".implode(", ", $mailto);
+                    return $url;
+                }),
             Actions\EditAction::make()->label("Bearbeiten"),
         ];
     }
