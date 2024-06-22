@@ -84,11 +84,21 @@ class Group extends Model
     }
 
     public function updateGroupMembers() {
-        $keycloakHelper = new KeycloakHelper();
-        $kc_groupmembers = $keycloakHelper->get_groupmembers($this);
+        if($this->has_keycloakgroup) {
+            $keycloakHelper = new KeycloakHelper();
+            $kc_groupmembers = $keycloakHelper->get_groupmembers($this);
+        }
+        else {
+            $kc_groupmembers = [];
+        }
 
-        $mailmanhelper = new MailmanHelper();
-        $mailman_groupmembers = $mailmanhelper->get_mailmanmembers($this);
+        if($this->has_mailinglist) {
+            $mailmanhelper = new MailmanHelper();
+            $mailman_groupmembers = $mailmanhelper->get_mailmanmembers($this);
+        }
+        else {
+            $mailman_groupmembers = [];
+        }
 
         $groupmembers = $this->groupmembers()->pluck("email")->all();
 
