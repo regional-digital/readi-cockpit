@@ -79,7 +79,7 @@ class Group extends Model
         $mailmanhelper = new MailmanHelper();
         $mailman_groupmembers = $mailmanhelper->get_mailmanmembers($this);
 
-        $this->groupmembers;
+        $groupmembers = $this->groupmembers()->pluck("email")->all();
 
         foreach($this->groupmembers as $groupmember) {
             $groupmemberChanged = false;
@@ -106,7 +106,20 @@ class Group extends Model
             }
         }
 
-
+        $allAppMembers = array_merge($kc_groupmembers, $mailman_groupmembers);
+        $missingMembers = array_diff($allAppMembers, $groupmembers);
+        foreach($missingMembers as $missingMember) {
+            if(in_array($missingMember, $kc_groupmembers)) $tobeinkeycloak = true;
+            else $tobeinkeycloak = false;
+            if(in_array($missingMember, $mailman_groupmembers)) $tobeinmailman = true;
+            else $tobeinmailman = false;
+            $groupmember = new Groupmember([
+                "email" => $missingMember
+                , "tobeinkeycloak" => $tobeinkeycloak
+                , 'tobeinmailman' => $tobeinmailman
+            ]);
+            $this->groupmembers()->save($groupmember);
+        }
     }
 
 }
