@@ -88,6 +88,17 @@ class GroupmembersRelationManager extends RelationManager
                     ->label('wartet auf Beitrit')
                     ->visible(function() {
                         return $this->getOwnerRecord()->moderated;
+                    })
+                    ->disabled(function(): bool
+                    {
+                        $keycloakhelper = new KeycloakHelper();
+                        $user = User::where('email', Auth::user()->email)->first();
+                        if(!in_array("Administrator", $user->roles()) && !$keycloakhelper->is_groupadmin($this->getOwnerRecord(), $user->email)) {
+                            return true;
+                        }
+                        else {
+                            return false;
+                        }
                     }),
                 ])
             ->filters([
