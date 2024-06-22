@@ -12,13 +12,4 @@ use App\Mail\JoinDeclined;
 
 class GroupmemberObserver
 {
-    public function updating(Groupmember $groupmember) {
-        if($groupmember->waitingforjoin) {
-            $groupmember->tobeinkeycloak = false;
-            $groupmember->tobeinmailinglist = false;
-        }
-    }
-    public function updated(Groupmember $groupmember): void
-    {
-    }
 }

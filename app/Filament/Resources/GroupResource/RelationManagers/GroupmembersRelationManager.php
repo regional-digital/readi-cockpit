@@ -111,28 +111,28 @@ class GroupmembersRelationManager extends RelationManager
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()
-                ->before(function (array $data, Tables\Actions\CreateAction $action, RelationManager $livewire) {
-                    if ($livewire->ownerRecord->groupmembers()->where("email", $data['email'])->first()) {
-                        Notification::make()
-                            ->warning()
-                            ->title('Gruppenmitglied existiert bereits!')
-                            ->body('Gruppenmitglied existiert bereits!')
-                            ->persistent()
-                            ->send();
-                        $action->halt();
-                    }
-                })
-                ->after(function (Model $record) {
-                    if ($record->tobeinkeycloak) {
-                        $KeycloakHelper = new KeycloakHelper();
-                        $KeycloakHelper->update_membership($record);
-                    }
-                    if ($record->tobeinmailinglist) {
-                        $MailmanHelper = new MailmanHelper();
-                        $MailmanHelper->update_membership($record);
-                    }
-                })
-                ->slideOver(),
+                    ->before(function (array $data, Tables\Actions\CreateAction $action, RelationManager $livewire) {
+                        if ($livewire->ownerRecord->groupmembers()->where("email", $data['email'])->first()) {
+                            Notification::make()
+                                ->warning()
+                                ->title('Gruppenmitglied existiert bereits!')
+                                ->body('Gruppenmitglied existiert bereits!')
+                                ->persistent()
+                                ->send();
+                            $action->halt();
+                        }
+                    })
+                    ->after(function (Model $record) {
+                        if ($record->tobeinkeycloak) {
+                            $KeycloakHelper = new KeycloakHelper();
+                            $KeycloakHelper->update_membership($record);
+                        }
+                        if ($record->tobeinmailinglist) {
+                            $MailmanHelper = new MailmanHelper();
+                            $MailmanHelper->update_membership($record);
+                        }
+                    })
+                    ->slideOver(),
             ])
             ->actions([
                 Tables\Actions\DeleteAction::make(),
