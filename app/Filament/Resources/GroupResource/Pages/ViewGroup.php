@@ -40,7 +40,7 @@ class ViewGroup extends ViewRecord
                     return !($group->is_groupmember(Auth::user()->email));
                 })
                 ->modalHeading('Gruppe beitreten')
-                ->modalDescription("Der Projektgruppe beitreten?")
+                ->modalDescription("Der Gruppe beitreten?")
                 ->modalSubmitActionLabel('Ja')
                 ->modalCancelActionLabel('Nein')
                 ->slideOver(),
@@ -55,7 +55,7 @@ class ViewGroup extends ViewRecord
                     return ($group->is_groupmember(Auth::user()->email));
                 })
                 ->modalHeading('Gruppe Verlasse')
-                ->modalDescription("Die Projektgruppe verlassen?")
+                ->modalDescription("Die Gruppe verlassen?")
                 ->modalSubmitActionLabel('Ja')
                 ->modalCancelActionLabel('Nein')
                 ->slideOver(),

@@ -159,6 +159,12 @@ class GroupmembersRelationManager extends RelationManager
                 Tables\Actions\Action::make('Genehmigen')
                     ->icon('heroicon-m-face-smile')
                     ->requiresConfirmation()
+                    ->label("Genehmigen")
+                    ->modalHeading('Gruppenmitgliedschaft genehmigen')
+                    ->modalDescription("Gruppenmitgliedschaft genehmigen?")
+                    ->modalSubmitActionLabel('Ja')
+                    ->modalCancelActionLabel('Nein')
+                    ->slideOver()
                     ->action(function (Groupmember $groupmember, Livewire $livewire) {
                         $groupmember->waitingforjoin = false;
                         $groupmember->save();
@@ -171,6 +177,12 @@ class GroupmembersRelationManager extends RelationManager
                 Tables\Actions\Action::make('Ablehnen')
                     ->icon('heroicon-m-face-frown')
                     ->requiresConfirmation()
+                    ->label("Ablehnen")
+                    ->modalHeading('Gruppenmitgliedschaft ablehnen')
+                    ->modalDescription("Gruppenmitgliedschaft ablehnen?")
+                    ->modalSubmitActionLabel('Ja')
+                    ->modalCancelActionLabel('Nein')
+                    ->slideOver()
                     ->action(function (Groupmember $groupmember, Livewire $livewire) {
                         $groupmember->delete();
                         Mail::to($groupmember->email)->send(new JoinDeclined($groupmember));
