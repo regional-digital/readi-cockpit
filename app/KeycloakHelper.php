@@ -11,6 +11,11 @@ class KeycloakHelper {
     private array $headers;
     private string $access_token;
 
+    function __construct()
+    {
+        $this->connect();
+    }
+
     private function connect()
     {
         if(!isset($this->client)) {
@@ -40,8 +45,7 @@ class KeycloakHelper {
         }
     }
 
-    private function get_groups($parentgroup = false) {
-        $this->connect();
+    public function get_groups($parentgroup = false) {
         if(!$parentgroup) {
             $res = $this->client->request('GET', env('KEYCLOAK_BASE_URL').'/admin/realms/'.env('KEYCLOAK_REALM').'/groups', ['headers' => $this->headers]);
         }
@@ -65,9 +69,16 @@ class KeycloakHelper {
 
     public function get_groupmembers(Group $group)
     {
-        $this->connect();
-        $kc_group = $group->keycloakgroup;
+        return $this->get_keycloakgroupmembers($group->keycloakgroup);
+    }
 
+    public function get_groupadminmembers(Group $group)
+    {
+        return $this->get_keycloakgroupmembers($group->keycloakadmingroup);
+    }
+
+    public function get_keycloakgroupmembers(String $kc_group)
+    {
         $res = $this->client->request('GET', env('KEYCLOAK_BASE_URL')."/admin/realms/".env('KEYCLOAK_REALM')."/groups/$kc_group/members", ['headers' => $this->headers]);
         $kc_groupmembers = json_decode($res->getBody());
         $groupmembers = array();
@@ -77,10 +88,10 @@ class KeycloakHelper {
         return $groupmembers;
     }
 
+
     public function is_groupadmin(Group $group, String $email): bool
     {
-        $this->connect();
-        $kc_admingroup = $group->keycloakadminrole;
+        $kc_admingroup = $group->keycloakadmingroup;
         $kc_user = $this->get_useridbymail($email);
         $res = $this->client->request('GET', env('KEYCLOAK_BASE_URL')."/admin/realms/".env('KEYCLOAK_REALM')."/users/$kc_user/groups", ['headers' => $this->headers]);
         $kc_groups = json_decode($res->getBody());
@@ -91,7 +102,6 @@ class KeycloakHelper {
     }
 
     private function get_useridbymail($email) {
-        $this->connect();
         $res = $this->client->request('GET', env('KEYCLOAK_BASE_URL').'/admin/realms/'.env('KEYCLOAK_REALM').'/users?email='.$email, ['headers' => $this->headers]);
         $kc_users = json_decode($res->getBody());
         $foundKcUser = false;
@@ -106,8 +116,6 @@ class KeycloakHelper {
     }
 
     public function update_membership(Groupmember $groupmember) {
-        $this->connect();
-
         $group = $groupmember->group;
         $kc_groupid = $group->keycloakgroup;
         $email = $groupmember->email;
@@ -129,7 +137,6 @@ class KeycloakHelper {
     }
 
     public function user_exists($email) {
-        $this->connect();
         $res = $this->client->request('GET', env('KEYCLOAK_BASE_URL').'/admin/realms/'.env('KEYCLOAK_REALM').'/users?email='.$email, ['headers' => $this->headers]);
         $kc_users = json_decode($res->getBody());
         $foundKcUser = false;

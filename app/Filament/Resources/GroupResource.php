@@ -55,7 +55,8 @@ class GroupResource extends Resource
                     Forms\Components\Select::make('keycloakgroup')
                         ->options(KeycloakHelper::get_groupselectoptions())
                         ->requiredIf('has_keycloakgroup', true),
-                    Forms\Components\TextInput::make('keycloakadminrole')
+                    Forms\Components\Select::make('keycloakadmingroup')
+                        ->options(KeycloakHelper::get_groupselectoptions())
                         ->requiredIf('has_keycloakgroup', true),
                 ])->columns(3);
     }
@@ -96,7 +97,7 @@ class GroupResource extends Resource
                 Tables\Columns\TextColumn::make('keycloakgroup')
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
-                Tables\Columns\TextColumn::make('keycloakadminrole')
+                Tables\Columns\TextColumn::make('keycloakadmingroup')
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
             ])

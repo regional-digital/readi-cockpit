@@ -5,6 +5,8 @@ namespace App\Observers;
 use App\Models\Groupmember;
 use App\KeycloakHelper;
 use App\MailmanHelper;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\UserWaitingForJoin;
 
 class GroupmemberObserver
 {
@@ -13,6 +15,8 @@ class GroupmemberObserver
      */
     public function update(Groupmember $groupmember): void
     {
+        //if user is waiting for join, do nothing
+        //if user was joined, update state in keycloak and mailman
 
         if ($groupmember->tobeinkeycloak != $groupmember->getOriginal('tobeinkeycloak')) {
             $KeycloakHelper = new KeycloakHelper();
@@ -25,4 +29,13 @@ class GroupmemberObserver
 
     }
 
+    public function created(Groupmember $groupmember) {
+        if($groupmember->group->moderated && $groupmember->waitingforjoin) {
+            $KeycloakHelper = new KeycloakHelper();
+            $groupadmins = $KeycloakHelper->get_groupadminmembers($groupmember->group);
+
+            Mail::to($groupadmins)->send(new UserWaitingForJoin($groupmember));
+
+        }
+    }
 }

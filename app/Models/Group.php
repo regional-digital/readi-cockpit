@@ -27,7 +27,7 @@ class Group extends Model
         , "mailinglisturl"
         , "mailinglistpassword"
         , "keycloakgroup"
-        , "keycloakadminrole"
+        , "keycloakadmingroup"
         , "mailinglistpassword"
     ];
 
