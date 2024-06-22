@@ -92,12 +92,12 @@ class Group extends Model
                 $groupmemberChanged = true;
             }
 
-            if(!in_array($groupmember->email, $mailman_groupmembers) && $groupmember->tobeinmailman == true) {
-                $groupmember->tobeinmailman = false;
+            if(!in_array($groupmember->email, $mailman_groupmembers) && $groupmember->tobeinmailinglist == true) {
+                $groupmember->tobeinmailinglist = false;
                 $groupmemberChanged = true;
             }
-            if(in_array($groupmember->email, $mailman_groupmembers) && $groupmember->tobeinmailman == false) {
-                $groupmember->tobeinmailman = true;
+            if(in_array($groupmember->email, $mailman_groupmembers) && $groupmember->tobeinmailinglist == false) {
+                $groupmember->tobeinmailinglist = true;
                 $groupmemberChanged = true;
             }
 
