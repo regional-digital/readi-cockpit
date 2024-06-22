@@ -28,6 +28,8 @@ class GroupmembersRelationManager extends RelationManager
 
     protected $listeners = ['refreshRelations' => '$refresh'];
 
+    protected static ?string $title = "Gruppenmitglieder";
+
     public function form(Form $form): Form
     {
         return $form
@@ -111,6 +113,7 @@ class GroupmembersRelationManager extends RelationManager
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()
+                    ->label("Neues Gruppenmitglied")
                     ->before(function (array $data, Tables\Actions\CreateAction $action, RelationManager $livewire) {
                         if ($livewire->ownerRecord->groupmembers()->where("email", $data['email'])->first()) {
                             Notification::make()
@@ -136,26 +139,26 @@ class GroupmembersRelationManager extends RelationManager
             ])
             ->actions([
                 Tables\Actions\DeleteAction::make()
-                ->label("Löschen")
-                ->modalHeading('Gruppenmitglied löschen')
-                ->modalDescription("Gruppenmitglied wirklich löschen? Das löscht die Adresse aus allen Anwendungen und kann nicht rückgängig gemacht werden")
-                ->modalSubmitActionLabel('Ja')
-                ->modalCancelActionLabel('Nein')
-                ->slideOver()
-                ->before(function (Model $record) {
-                    if ($record->tobeinkeycloak) {
-                        $record->tobeinkeycloak = false;
-                        $KeycloakHelper = new KeycloakHelper();
-                        $KeycloakHelper->update_membership($record);
-                    }
-                    if ($record->tobeinmailinglist) {
-                        $record->tobeinmailinglist = false;
-                        $MailmanHelper = new MailmanHelper();
-                        $MailmanHelper->update_membership($record);
-                    }
-                }),
-                Tables\Actions\ForceDeleteAction::make(),
-                Tables\Actions\RestoreAction::make(),
+                    ->label("Löschen")
+                    ->modalHeading('Gruppenmitglied löschen')
+                    ->modalDescription("Gruppenmitglied wirklich löschen? Das löscht die Adresse aus allen Anwendungen und kann nicht rückgängig gemacht werden")
+                    ->modalSubmitActionLabel('Ja')
+                    ->modalCancelActionLabel('Nein')
+                    ->slideOver()
+                    ->before(function (Model $record) {
+                        if ($record->tobeinkeycloak) {
+                            $record->tobeinkeycloak = false;
+                            $KeycloakHelper = new KeycloakHelper();
+                            $KeycloakHelper->update_membership($record);
+                        }
+                        if ($record->tobeinmailinglist) {
+                            $record->tobeinmailinglist = false;
+                            $MailmanHelper = new MailmanHelper();
+                            $MailmanHelper->update_membership($record);
+                        }
+                    }),
+                Tables\Actions\ForceDeleteAction::make()->label("Endgültig löschen"),
+                Tables\Actions\RestoreAction::make()->label("Wiederherstellen"),
                 Tables\Actions\Action::make('Genehmigen')
                     ->icon('heroicon-m-face-smile')
                     ->requiresConfirmation()
