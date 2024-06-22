@@ -105,14 +105,14 @@ class GroupResource extends Resource
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make()
+                Tables\Actions\ViewAction::make()->label("Anschauen"),
+                Tables\Actions\EditAction::make()->label("Bearbeiten")
                 ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                    Tables\Actions\ForceDeleteBulkAction::make(),
-                    Tables\Actions\RestoreBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()->label("Löschen"),
+                    Tables\Actions\ForceDeleteBulkAction::make()->label("Endgültig löschen"),
+                    Tables\Actions\RestoreBulkAction::make()->label("Wiederherstellen"),
                 ]),
             ]);
     }

@@ -38,7 +38,12 @@ class ViewGroup extends ViewRecord
                 })
                 ->visible(function(Group $group) {
                     return !($group->is_groupmember(Auth::user()->email));
-                }),
+                })
+                ->modalHeading('Gruppe beitreten')
+                ->modalDescription("Der Projektgruppe beitreten?")
+                ->modalSubmitActionLabel('Ja')
+                ->modalCancelActionLabel('Nein')
+                ->slideOver(),
             Actions\Action::make('Gruppe verlassen')
                 ->icon('heroicon-m-minus-circle')
                 ->requiresConfirmation()
@@ -48,8 +53,13 @@ class ViewGroup extends ViewRecord
                 })
                 ->visible(function(Group $group) {
                     return ($group->is_groupmember(Auth::user()->email));
-                }),
-            Actions\EditAction::make(),
+                })
+                ->modalHeading('Gruppe Verlasse')
+                ->modalDescription("Die Projektgruppe verlassen?")
+                ->modalSubmitActionLabel('Ja')
+                ->modalCancelActionLabel('Nein')
+                ->slideOver(),
+            Actions\EditAction::make()->label("Bearbeiten"),
         ];
     }
 }

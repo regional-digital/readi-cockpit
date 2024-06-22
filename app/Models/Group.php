@@ -68,8 +68,19 @@ class Group extends Model
     public function leaveGroup() {
         $email = Auth::user()->email;
         if($this->is_groupmember($email)) {
-            Groupmember::where("email", $email)->first()->delete();
-        }
+            $groupmember = Groupmember::where("email", $email)->first();
+            if ($groupmember->tobeinkeycloak) {
+                $groupmember->tobeinkeycloak = false;
+                $KeycloakHelper = new KeycloakHelper();
+                $KeycloakHelper->update_membership($groupmember);
+            }
+            if ($groupmember->tobeinmailinglist) {
+                $groupmember->tobeinmailinglist = false;
+                $MailmanHelper = new MailmanHelper();
+                $MailmanHelper->update_membership($groupmember);
+            }
+            $groupmember->delete();
+}
     }
 
     public function updateGroupMembers() {
@@ -111,12 +122,12 @@ class Group extends Model
         foreach($missingMembers as $missingMember) {
             if(in_array($missingMember, $kc_groupmembers)) $tobeinkeycloak = true;
             else $tobeinkeycloak = false;
-            if(in_array($missingMember, $mailman_groupmembers)) $tobeinmailman = true;
-            else $tobeinmailman = false;
+            if(in_array($missingMember, $mailman_groupmembers)) $tobeinmailinglist = true;
+            else $tobeinmailinglist = false;
             $groupmember = new Groupmember([
                 "email" => $missingMember
                 , "tobeinkeycloak" => $tobeinkeycloak
-                , 'tobeinmailman' => $tobeinmailman
+                , 'tobeinmailinglist' => $tobeinmailinglist
             ]);
             $this->groupmembers()->save($groupmember);
         }
