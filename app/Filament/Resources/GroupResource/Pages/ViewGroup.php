@@ -39,7 +39,6 @@ class ViewGroup extends ViewRecord
                 ->visible(function(Group $group) {
                     return !($group->is_groupmember(Auth::user()->email));
                 })
-                ->modalHeading('Gruppe beitreten')
                 ->modalDescription("Der Gruppe beitreten?")
                 ->modalSubmitActionLabel('Ja')
                 ->modalCancelActionLabel('Nein')
@@ -72,7 +71,7 @@ class ViewGroup extends ViewRecord
                     $url = "mailto:".implode(", ", $mailto);
                     return $url;
                 }),
-            Actions\EditAction::make()->label("Bearbeiten"),
+            Actions\EditAction::make(),
         ];
     }
 }

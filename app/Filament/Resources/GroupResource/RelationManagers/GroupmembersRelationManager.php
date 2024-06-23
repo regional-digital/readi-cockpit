@@ -139,7 +139,6 @@ class GroupmembersRelationManager extends RelationManager
             ])
             ->actions([
                 Tables\Actions\DeleteAction::make()
-                    ->label("Löschen")
                     ->modalHeading('Gruppenmitglied löschen')
                     ->modalDescription("Gruppenmitglied wirklich löschen? Das löscht die Adresse aus allen Anwendungen und kann nicht rückgängig gemacht werden")
                     ->modalSubmitActionLabel('Ja')
