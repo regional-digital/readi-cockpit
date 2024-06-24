@@ -50,7 +50,7 @@ class KeycloakHelper {
             $res = $this->client->request('GET', env('KEYCLOAK_BASE_URL').'/admin/realms/'.env('KEYCLOAK_REALM').'/groups', ['headers' => $this->headers]);
         }
         else {
-            $res = $this->client->request('GET', env('KEYCLOAK_BASE_URL').'/admin/realms/'.env('KEYCLOAK_REALM').'/groups/'.$parentgroup.'/children', ['headers' => $this->headers]);
+            $res = $this->client->request('GET', env('KEYCLOAK_BASE_URL').'/admin/realms/'.env('KEYCLOAK_REALM').'/groups/'.$parentgroup.'/children?max=200', ['headers' => $this->headers]);
         }
         $groups = json_decode($res->getBody());
         $newgroups = [];
