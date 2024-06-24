@@ -54,10 +54,12 @@ class GroupResource extends Resource
                         ->label("Hat eine Keycloak-Gruppe"),
                     Forms\Components\Select::make('keycloakgroup')
                         ->options(KeycloakHelper::get_groupselectoptions())
-                        ->requiredIf('has_keycloakgroup', true),
+                        ->requiredIf('has_keycloakgroup', true)
+                        ->searchable(),
                     Forms\Components\Select::make('keycloakadmingroup')
                         ->options(KeycloakHelper::get_groupselectoptions())
-                        ->requiredIf('has_keycloakgroup', true),
+                        ->requiredIf('has_keycloakgroup', true)
+                        ->searchable(),
                 ])->columns(3);
     }
 
