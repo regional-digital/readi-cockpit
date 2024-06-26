@@ -51,7 +51,8 @@ class GroupmembersRelationManager extends RelationManager
             ->columns([
                 Tables\Columns\TextColumn::make('email')
                     ->label("E-Mail")
-                    ->sortable(),
+                    ->sortable()
+                    ->searchable(),
                 Tables\Columns\ToggleColumn::make('tobeinkeycloak')
                     ->label('Keycloak')
                     ->tooltip(function (Model $record) {
@@ -62,7 +63,6 @@ class GroupmembersRelationManager extends RelationManager
                         }
                         else return "";
                     })
-                    ->searchable()
                     ->disabled(function (Model $record): bool
                     {
                         if($record->waitingforjoin) return true;
