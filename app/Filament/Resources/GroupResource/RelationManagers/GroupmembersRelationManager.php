@@ -173,7 +173,9 @@ class GroupmembersRelationManager extends RelationManager
                         Mail::to($groupmember->email)->send(new JoinApproved($groupmember));
                         $livewire->dispatch('refreshRelations');
                     })->visible(function(Groupmember $groupmember) {
-                        if($groupmember->waitingforjoin && $groupmember->group->moderated) return true;
+                        $keycloakhelper = new KeycloakHelper();
+                        $user = User::where('email', Auth::user()->email)->first();
+                        if($groupmember->waitingforjoin && $groupmember->group->moderated && $keycloakhelper->is_groupadmin($this->getOwnerRecord(), $user->email)) return true;
                         return false;
                     }),
                 Tables\Actions\Action::make('Ablehnen')
@@ -190,7 +192,9 @@ class GroupmembersRelationManager extends RelationManager
                         Mail::to($groupmember->email)->send(new JoinDeclined($groupmember));
                         $livewire->dispatch('refreshRelations');
                     })->visible(function(Groupmember $groupmember) {
-                        if($groupmember->waitingforjoin && $groupmember->group->moderated) return true;
+                        $keycloakhelper = new KeycloakHelper();
+                        $user = User::where('email', Auth::user()->email)->first();
+                        if($groupmember->waitingforjoin && $groupmember->group->moderated && $keycloakhelper->is_groupadmin($this->getOwnerRecord(), $user->email)) return true;
                         return false;
                     }),
 
