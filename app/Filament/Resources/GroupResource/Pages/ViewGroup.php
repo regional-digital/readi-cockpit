@@ -71,6 +71,20 @@ class ViewGroup extends ViewRecord
                     $url = "mailto:".implode(", ", $mailto);
                     return $url;
                 }),
+            Actions\Action::make("Infoseite")
+                ->url(function(Group $group) {
+                    return "https://".$group->url;
+                })
+                ->openUrlInNewTab()
+                ->visible(function(Group $group) {
+                    if(isset($group->url) && trim($group->url) != '') {
+                        return true;
+                    }
+                    else {
+                        return false;
+                    }
+                })
+                ->icon('heroicon-m-globe-alt')  ,
             Actions\EditAction::make(),
         ];
     }

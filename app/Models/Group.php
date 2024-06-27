@@ -21,6 +21,8 @@ class Group extends Model
     protected $fillable = [
         "name"
         , "description"
+        , "grouptype"
+        , "url"
         , "moderated"
         , "has_mailinglist"
         , "has_keycloakgroup"

@@ -39,8 +39,18 @@ class GroupResource extends Resource
                         ->columnSpan(2)
                         ->label("Beschreibung"),
                     Forms\Components\Toggle::make('moderated')
-                        ->columnSpanFull()
                         ->label("Gruppe ist moderiert"),
+                    Forms\Components\Select::make('grouptype')
+                        ->label("Gruppentyp")
+                        ->options([
+                            "Projektgruppe" => "Projektgruppe"
+                            , "Fachgruppe" => "Fachgruppe"
+                            , "Netzwerktreffen" => "Netzwerktreffen"
+                            , "Technische Gruppe" => "Technische Gruppe"
+                        ]),
+                    Forms\Components\TextInput::make('url')
+                        ->label("URL")
+                        ->prefix('https://'),
                     Forms\Components\Toggle::make('has_mailinglist')
                         ->label("Hat eine Mailingliste"),
                     Forms\Components\TextInput::make('mailinglisturl')
@@ -80,19 +90,34 @@ class GroupResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('name')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(),
+                Tables\Columns\TextColumn::make('grouptype')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable()
+                    ->label("Gruppentyp"),
                 Tables\Columns\TextColumn::make('description')
                     ->searchable()
-                    ->label("Beschreibung"),
+                    ->sortable()
+                    ->label("Beschreibung")
+                    ->toggleable(),
                 Tables\Columns\IconColumn::make('moderated')
+                    ->sortable()
                     ->label("moderiert")
-                    ->boolean(),
+                    ->boolean()
+                    ->toggleable(),
                 Tables\Columns\IconColumn::make('has_mailinglist')
+                    ->sortable()
                     ->label("Mailingliste")
-                    ->boolean(),
+                    ->boolean()
+                    ->toggleable(),
                 Tables\Columns\IconColumn::make('has_keycloakgroup')
                     ->label("Keycloak-Gruppe")
-                    ->boolean(),
+                    ->boolean()
+                    ->sortable()
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('mailinglisturl')
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
@@ -105,6 +130,17 @@ class GroupResource extends Resource
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
+                Tables\Filters\SelectFilter::make("grouptype")
+                    ->label("Gruppentyp")
+                    ->multiple()
+                    ->options([
+                        "Projektgruppe" => "Projektgruppe"
+                        , "Fachgruppe" => "Fachgruppe"
+                        , "Netzwerktreffen" => "Netzwerktreffen"
+                        , "Technische Gruppe" => "Technische Gruppe"
+                    ])
+                    ->searchable()
+                    ->default(["Projektgruppe", "Netzwerktreffen"]),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make()->label("Anschauen"),
@@ -116,7 +152,8 @@ class GroupResource extends Resource
                     Tables\Actions\ForceDeleteBulkAction::make()->label("Endgültig löschen"),
                     Tables\Actions\RestoreBulkAction::make()->label("Wiederherstellen"),
                 ]),
-            ]);
+            ])
+            ->persistFiltersInSession();
     }
 
     public static function getRelations(): array
