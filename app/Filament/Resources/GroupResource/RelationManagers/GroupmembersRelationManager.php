@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\GroupResource\RelationManagers;
 
 use App\Models\Groupmember;
+use App\Models\Group;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -76,10 +77,16 @@ class GroupmembersRelationManager extends RelationManager
                             return false;
                         }
                     })
-                    ->beforeStateUpdated(function ($record, $state) {
-                        $record->tobeinkeycloak = $state;
-                        $KeycloakHelper = new KeycloakHelper();
-                        $KeycloakHelper->update_membership($record);
+                    ->beforeStateUpdated(function ($record, $state, Group $group) {
+                        if($group->has_keycloakgroup && $group->keycloakgroup != null) {
+                            $record->tobeinkeycloak = $state;
+                            $KeycloakHelper = new KeycloakHelper();
+                            $KeycloakHelper->update_membership($record);
+                        }
+                    })
+                    ->hidden(function(Group $group) {
+                        if($group->has_keycloakgroup && $group->keycloakgroup != null) return false;
+                        else return true;
                     }),
                 Tables\Columns\ToggleColumn::make('tobeinmailinglist')
                     ->label('Mailingliste')
@@ -88,7 +95,10 @@ class GroupmembersRelationManager extends RelationManager
                         }
                     )
                     ->visible(function() {
-                        return $this->getOwnerRecord()->has_mailinglist;
+                        if($this->getOwnerRecord()->has_mailinglist && $this->getOwnerRecord()->mailinglisturl != null && $this->getOwnerRecord()->mailinglistpassword != null) {
+                            return false;
+                        }
+                        else return true;
                     })
                     ->disabled(function(Model $record): bool
                     {
@@ -175,8 +185,8 @@ class GroupmembersRelationManager extends RelationManager
                     })->visible(function(Groupmember $groupmember) {
                         $keycloakhelper = new KeycloakHelper();
                         $user = User::where('email', Auth::user()->email)->first();
-                        if($groupmember->waitingforjoin && $groupmember->group->moderated && $keycloakhelper->is_groupadmin($this->getOwnerRecord(), $user->email)) return true;
-                        return false;
+                        if($groupmember->waitingforjoin && (in_array("Administrator", $user->roles()) || ($this->getOwnerRecord()->moderated && $keycloakhelper->is_groupadmin($this->getOwnerRecord(), $user->email)))) return true;
+                        else return false;
                     }),
                 Tables\Actions\Action::make('Ablehnen')
                     ->icon('heroicon-m-face-frown')

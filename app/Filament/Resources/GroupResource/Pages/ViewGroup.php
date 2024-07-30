@@ -29,10 +29,12 @@ class ViewGroup extends ViewRecord
                 ->action(function (Group $group, Livewire $livewire) {
                     $group->joinGroup();
                     if($group->moderated) {
-                        $KeycloakHelper = new KeycloakHelper();
-                        $groupadmins = $KeycloakHelper->get_groupadminmembers($group);
-                        $groupmember = Groupmember::where('email', Auth::user()->email)->first();
-                        Mail::to($groupadmins)->send(new UserWaitingForJoin($groupmember));
+                        if($group->keycloakadmingroup != null) {
+                            $KeycloakHelper = new KeycloakHelper();
+                            $groupadmins = $KeycloakHelper->get_groupadminmembers($group);
+                            $groupmember = Groupmember::where('email', Auth::user()->email)->first();
+                            Mail::to($groupadmins)->send(new UserWaitingForJoin($groupmember));
+                        }
                     }
                     $livewire->dispatch('refreshRelations');
                 })
