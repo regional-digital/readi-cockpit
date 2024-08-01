@@ -47,6 +47,7 @@ class GroupResource extends Resource
                             , "Fachgruppe" => "Fachgruppe"
                             , "Netzwerktreffen" => "Netzwerktreffen"
                             , "Technische Gruppe" => "Technische Gruppe"
+                            , "Organisatorische Gruppe" => "Organisatorische Gruppe"
                         ]),
                     Forms\Components\TextInput::make('url')
                         ->label("URL")
@@ -138,6 +139,7 @@ class GroupResource extends Resource
                         , "Fachgruppe" => "Fachgruppe"
                         , "Netzwerktreffen" => "Netzwerktreffen"
                         , "Technische Gruppe" => "Technische Gruppe"
+                        , "Organisatorische Gruppe" => "Organisatorische Gruppe"
                     ])
                     ->searchable()
                     ->default(["Projektgruppe", "Netzwerktreffen"]),
