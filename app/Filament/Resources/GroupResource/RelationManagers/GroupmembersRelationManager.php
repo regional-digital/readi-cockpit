@@ -84,8 +84,8 @@ class GroupmembersRelationManager extends RelationManager
                             $KeycloakHelper->update_membership($record);
                         }
                     })
-                    ->hidden(function(Group $group) {
-                        if($group->has_keycloakgroup && $group->keycloakgroup != null) return false;
+                    ->hidden(function() {
+                        if($this->getOwnerRecord()->has_keycloakgroup && $this->getOwnerRecord()->keycloakgroup != null) return false;
                         else return true;
                     }),
                 Tables\Columns\ToggleColumn::make('tobeinmailinglist')
