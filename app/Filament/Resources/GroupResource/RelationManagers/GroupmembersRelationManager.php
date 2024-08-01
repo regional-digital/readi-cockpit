@@ -95,7 +95,7 @@ class GroupmembersRelationManager extends RelationManager
                         }
                     )
                     ->visible(function() {
-                        if($this->getOwnerRecord()->has_mailinglist && $this->getOwnerRecord()->mailinglisturl != null && $this->getOwnerRecord()->mailinglistpassword != null) {
+                        if(!$this->getOwnerRecord()->has_mailinglist && $this->getOwnerRecord()->mailinglisturl != null && $this->getOwnerRecord()->mailinglistpassword != null) {
                             return false;
                         }
                         else return true;
