@@ -55,7 +55,7 @@ class ViewGroup extends ViewRecord
                 ->visible(function(Group $group) {
                     return ($group->is_groupmember(Auth::user()->email));
                 })
-                ->modalHeading('Gruppe Verlasse')
+                ->modalHeading('Gruppe verlassen')
                 ->modalDescription("Die Gruppe verlassen?")
                 ->modalSubmitActionLabel('Ja')
                 ->modalCancelActionLabel('Nein')
