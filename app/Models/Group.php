@@ -82,7 +82,7 @@ class Group extends Model
                 $MailmanHelper->update_membership($groupmember);
             }
             $groupmember->delete();
-}
+        }
     }
 
     public function updateGroupMembers() {
