@@ -68,7 +68,7 @@ class GroupResource extends Resource
                         ->searchable(),
                     Forms\Components\Select::make('keycloakadmingroup')
                         ->options(KeycloakHelper::get_groupselectoptions())
-                        ->requiredIf('has_keycloakgroup', true)
+                        ->requiredIf('moderated', true)
                         ->searchable(),
                 ])->columns(3);
     }
