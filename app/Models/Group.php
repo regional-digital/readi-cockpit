@@ -11,6 +11,7 @@ use App\Observers\GroupObserver;
 use Illuminate\Support\Facades\Auth;
 use App\KeycloakHelper;
 use App\MailmanHelper;
+use Illuminate\Support\Facades\Cache;
 
 #[ObservedBy([GroupObserver::class])]
 class Group extends Model
@@ -86,6 +87,9 @@ class Group extends Model
     }
 
     public function updateGroupMembers() {
+        if(Cache::get("updateGroupMembers_".$this->name."_last_update")) {
+            return;
+        }
         if($this->has_keycloakgroup) {
             $keycloakHelper = new KeycloakHelper();
             $kc_groupmembers = $keycloakHelper->get_groupmembers($this);
@@ -143,6 +147,8 @@ class Group extends Model
             ]);
             $this->groupmembers()->save($groupmember);
         }
+
+        Cache::add("updateGroupMembers_".$this->name."_last_update", 1, now()->addSeconds(10));
     }
 
 }
