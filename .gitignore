@@ -18,3 +18,13 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
+public/css/filament/filament/app.css
+public/css/filament/filament/app.css
+public/css/filament/forms/forms.css
+public/js/filament/widgets/components/chart.js
+public/js/filament/tables/components/table.js
+public/js/filament/support/support.js
+public/js/filament/forms/components/textarea.js
+public/js/filament/forms/components/rich-editor.js
+public/js/filament/forms/components/markdown-editor.js
+public/js/filament/forms/components/file-upload.js
