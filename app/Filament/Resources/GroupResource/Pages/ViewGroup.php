@@ -32,7 +32,7 @@ class ViewGroup extends ViewRecord
                         if($group->keycloakadmingroup != null) {
                             $KeycloakHelper = new KeycloakHelper();
                             $groupadmins = $KeycloakHelper->get_groupadminmembers($group);
-                            $groupmember = Groupmember::where('email', Auth::user()->email)->first();
+                            $groupmember = Groupmember::where('email', Auth::user()->email)->where('group_id', $group->id)->first();
                             Mail::to($groupadmins)->send(new UserWaitingForJoin($groupmember));
                         }
                     }
