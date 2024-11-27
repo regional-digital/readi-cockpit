@@ -18,6 +18,7 @@ use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Heloufir\FilamentKeycloakSso\FilamentKeycloakSsoPlugin;
+use Filament\Support\Enums\MaxWidth;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -57,6 +58,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->plugins([
                 new FilamentKeycloakSsoPlugin()
-            ]);
+            ])
+            ->maxContentWidth(MaxWidth::FitContent);
     }
 }
