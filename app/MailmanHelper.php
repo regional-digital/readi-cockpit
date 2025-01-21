@@ -3,11 +3,23 @@ namespace App;
 use App\Models\Groupmember;
 use App\Models\Group;
 use splattner\MailmanAPI\mailmanAPI;
+use \Exception;
+use Filament\Notifications\Notification; 
 
 class MailmanHelper {
     public function get_mailmanmembers(Group $group): array
     {
-        $mailmanapi = new MailmanAPI($group->mailinglisturl, $group->mailinglistpassword);
+        try {
+            $mailmanapi = new MailmanAPI($group->mailinglisturl, $group->mailinglistpassword);
+        } catch (Exception $e) {
+            Notification::make()
+                ->title('Gruppe konnte auf Mailman nicht abgefragt werden. Deaktiviere Mailman-Feature.')
+                ->danger()
+                ->send();
+                $group->has_mailinglist = false;
+                $group->save();
+                return [];
+        }
         $mailmanmembers = $mailmanapi->getMemberlist();
         return $mailmanmembers;
     }
