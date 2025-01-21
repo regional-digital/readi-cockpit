@@ -29,3 +29,5 @@ public/js/filament/forms/components/rich-editor.js
 public/js/filament/forms/components/markdown-editor.js
 public/js/filament/forms/components/file-upload.js
 public/js/filament/forms/components/date-time-picker.js
+public/js/filament/forms/components/color-picker.js
+public/js/filament/filament/echo.js
