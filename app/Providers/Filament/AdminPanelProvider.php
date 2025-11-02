@@ -29,8 +29,8 @@ class AdminPanelProvider extends PanelProvider
     {
         return $panel
             ->default()
-            ->id('admin')
-            ->path('/')
+            ->id('cockpit')
+            ->path('/cockpit')
             ->login()
             ->colors([
                 'primary' => Color::Amber,
@@ -60,7 +60,7 @@ class AdminPanelProvider extends PanelProvider
                 Authenticate::class,
             ])
             ->plugins([
-//                new FilamentKeycloakSsoPlugin()
+                new FilamentKeycloakSsoPlugin()
             ])
             ->maxContentWidth(Width::FitContent);
     }
