@@ -1,8 +1,12 @@
 <?php
 
-namespace App\Filament\Resources\GroupResource\Pages;
+namespace App\Filament\Resources\Groups\Pages;
 
-use App\Filament\Resources\GroupResource;
+use Filament\Actions\ViewAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\ForceDeleteAction;
+use Filament\Actions\RestoreAction;
+use App\Filament\Resources\Groups\GroupResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
@@ -13,11 +17,11 @@ class EditGroup extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\ViewAction::make(),
-            Actions\DeleteAction::make()
+            ViewAction::make(),
+            DeleteAction::make()
                 ->slideOver(),
-            Actions\ForceDeleteAction::make(),
-            Actions\RestoreAction::make(),
+            ForceDeleteAction::make(),
+            RestoreAction::make(),
         ];
     }
 

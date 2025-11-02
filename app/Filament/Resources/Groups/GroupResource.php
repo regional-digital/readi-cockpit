@@ -1,12 +1,30 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\Resources\Groups;
 
+use Filament\Schemas\Schema;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\Select;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Filters\TrashedFilter;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Actions\ViewAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\ForceDeleteBulkAction;
+use Filament\Actions\RestoreBulkAction;
+use App\Filament\Resources\Groups\RelationManagers\GroupmembersRelationManager;
+use App\Filament\Resources\Groups\Pages\ListGroups;
+use App\Filament\Resources\Groups\Pages\CreateGroup;
+use App\Filament\Resources\Groups\Pages\ViewGroup;
+use App\Filament\Resources\Groups\Pages\EditGroup;
 use App\Filament\Resources\GroupResource\Pages;
 use App\Filament\Resources\GroupResource\RelationManagers;
 use App\Models\Group;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -22,25 +40,25 @@ class GroupResource extends Resource
 {
     protected static ?string $model = Group::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
 
     protected static ?string $modelLabel = 'Gruppe';
     protected static ?string $pluralModelLabel = 'Gruppen';
 
     protected static ?string $recordTitleAttribute = 'name';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                    Forms\Components\TextInput::make('name')
+        return $schema
+            ->components([
+                    TextInput::make('name')
                         ->required(),
-                    Forms\Components\TextInput::make('description')
+                    TextInput::make('description')
                         ->columnSpan(2)
                         ->label("Beschreibung"),
-                    Forms\Components\Toggle::make('moderated')
+                    Toggle::make('moderated')
                         ->label("Gruppe ist moderiert"),
-                    Forms\Components\Select::make('grouptype')
+                    Select::make('grouptype')
                         ->label("Gruppentyp")
                         ->options([
                             "Projektgruppe" => "Projektgruppe"
@@ -49,25 +67,25 @@ class GroupResource extends Resource
                             , "Technische Gruppe" => "Technische Gruppe"
                             , "Organisatorische Gruppe" => "Organisatorische Gruppe"
                         ]),
-                    Forms\Components\TextInput::make('url')
+                    TextInput::make('url')
                         ->label("URL")
                         ->prefix('https://'),
-                    Forms\Components\Toggle::make('has_mailinglist')
+                    Toggle::make('has_mailinglist')
                         ->label("Hat eine Mailingliste"),
-                    Forms\Components\TextInput::make('mailinglisturl')
+                    TextInput::make('mailinglisturl')
                         ->label("Mailinglisten-URL")
                         ->requiredIf('has_mailinglist', true),
-                    Forms\Components\TextInput::make('mailinglistpassword')
+                    TextInput::make('mailinglistpassword')
                         ->label("Mailinglisten-Passwort")
                         ->dehydrated(fn ($state) => filled($state))
                         ->password(),
-                    Forms\Components\Toggle::make('has_keycloakgroup')
+                    Toggle::make('has_keycloakgroup')
                         ->label("Hat eine Keycloak-Gruppe"),
-                    Forms\Components\Select::make('keycloakgroup')
+                    Select::make('keycloakgroup')
                         ->options(KeycloakHelper::get_groupselectoptions())
                         ->requiredIf('has_keycloakgroup', true)
                         ->searchable(),
-                    Forms\Components\Select::make('keycloakadmingroup')
+                    Select::make('keycloakadmingroup')
                         ->options(KeycloakHelper::get_groupselectoptions())
                         ->requiredIf('moderated', true)
                         ->searchable(),
@@ -78,60 +96,60 @@ class GroupResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('deleted_at')
+                TextColumn::make('deleted_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('name')
+                TextColumn::make('name')
                     ->searchable()
                     ->sortable()
                     ->toggleable(),
-                Tables\Columns\TextColumn::make('grouptype')
+                TextColumn::make('grouptype')
                     ->searchable()
                     ->sortable()
                     ->toggleable()
                     ->label("Gruppentyp"),
-                Tables\Columns\TextColumn::make('description')
+                TextColumn::make('description')
                     ->searchable()
                     ->sortable()
                     ->label("Beschreibung")
                     ->toggleable(),
-                Tables\Columns\IconColumn::make('moderated')
+                IconColumn::make('moderated')
                     ->sortable()
                     ->label("moderiert")
                     ->boolean()
                     ->toggleable(),
-                Tables\Columns\IconColumn::make('has_mailinglist')
+                IconColumn::make('has_mailinglist')
                     ->sortable()
                     ->label("Mailingliste")
                     ->boolean()
                     ->toggleable(),
-                Tables\Columns\IconColumn::make('has_keycloakgroup')
+                IconColumn::make('has_keycloakgroup')
                     ->label("Keycloak-Gruppe")
                     ->boolean()
                     ->sortable()
                     ->toggleable(),
-                Tables\Columns\TextColumn::make('mailinglisturl')
+                TextColumn::make('mailinglisturl')
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
-                Tables\Columns\TextColumn::make('keycloakgroup')
+                TextColumn::make('keycloakgroup')
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
-                Tables\Columns\TextColumn::make('keycloakadmingroup')
+                TextColumn::make('keycloakadmingroup')
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
             ])
             ->filters([
-                Tables\Filters\TrashedFilter::make(),
-                Tables\Filters\SelectFilter::make("grouptype")
+                TrashedFilter::make(),
+                SelectFilter::make("grouptype")
                     ->label("Gruppentyp")
                     ->multiple()
                     ->options([
@@ -144,15 +162,15 @@ class GroupResource extends Resource
                     ->searchable()
                     ->default(["Projektgruppe", "Netzwerktreffen"]),
             ])
-            ->actions([
-                Tables\Actions\ViewAction::make()->label("Anschauen"),
-                Tables\Actions\EditAction::make()->label("Bearbeiten")
+            ->recordActions([
+                ViewAction::make()->label("Anschauen"),
+                EditAction::make()->label("Bearbeiten")
                 ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make()->label("Löschen"),
-                    Tables\Actions\ForceDeleteBulkAction::make()->label("Endgültig löschen"),
-                    Tables\Actions\RestoreBulkAction::make()->label("Wiederherstellen"),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make()->label("Löschen"),
+                    ForceDeleteBulkAction::make()->label("Endgültig löschen"),
+                    RestoreBulkAction::make()->label("Wiederherstellen"),
                 ]),
             ])
             ->persistFiltersInSession();
@@ -161,17 +179,17 @@ class GroupResource extends Resource
     public static function getRelations(): array
     {
         return [
-            RelationManagers\GroupmembersRelationManager::class,
+            GroupmembersRelationManager::class,
         ];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListGroups::route('/'),
-            'create' => Pages\CreateGroup::route('/create'),
-            'view' => Pages\ViewGroup::route('/{record}'),
-            'edit' => Pages\EditGroup::route('/{record}/edit'),
+            'index' => ListGroups::route('/'),
+            'create' => CreateGroup::route('/create'),
+            'view' => ViewGroup::route('/{record}'),
+            'edit' => EditGroup::route('/{record}/edit'),
         ];
     }
 

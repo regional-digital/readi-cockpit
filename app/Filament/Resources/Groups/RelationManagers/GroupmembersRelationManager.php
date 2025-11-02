@@ -1,11 +1,24 @@
 <?php
 
-namespace App\Filament\Resources\GroupResource\RelationManagers;
+namespace App\Filament\Resources\Groups\RelationManagers;
 
+use Filament\Schemas\Schema;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
+use Filament\Tables\Filters\TrashedFilter;
+use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\ForceDeleteAction;
+use Filament\Actions\RestoreAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\RestoreBulkAction;
+use Filament\Actions\ForceDeleteBulkAction;
 use App\Models\Groupmember;
 use App\Models\Group;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -31,16 +44,16 @@ class GroupmembersRelationManager extends RelationManager
 
     protected static ?string $title = "Gruppenmitglieder";
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('email')
+        return $schema
+            ->components([
+                TextInput::make('email')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\Toggle::make('tobeinkeycloak')
+                Toggle::make('tobeinkeycloak')
                     ->label("Keycloak"),
-                Forms\Components\Toggle::make('tobeinmailinglist')
+                Toggle::make('tobeinmailinglist')
                     ->label("Mailingliste")
             ])->columns(1);
     }
@@ -50,11 +63,11 @@ class GroupmembersRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('email')
             ->columns([
-                Tables\Columns\TextColumn::make('email')
+                TextColumn::make('email')
                     ->label("E-Mail")
                     ->sortable()
                     ->searchable(),
-                Tables\Columns\ToggleColumn::make('tobeinkeycloak')
+                ToggleColumn::make('tobeinkeycloak')
                     ->label('Keycloak')
                     ->tooltip(function (Model $record) {
                         if($record->waitingforjoin) return "Deaktiviert, weil der Benutzer noch auf Beitritt wartet";
@@ -88,7 +101,7 @@ class GroupmembersRelationManager extends RelationManager
                         if($this->getOwnerRecord()->has_keycloakgroup && $this->getOwnerRecord()->keycloakgroup != null) return false;
                         else return true;
                     }),
-                Tables\Columns\ToggleColumn::make('tobeinmailinglist')
+                ToggleColumn::make('tobeinmailinglist')
                     ->label('Mailingliste')
                     ->tooltip(function(Model $record) {
                             if($record->waitingforjoin) return "Deaktiviert, weil der Benutzer noch auf Beitritt wartet";
@@ -119,12 +132,12 @@ class GroupmembersRelationManager extends RelationManager
                     }),
                 ])
             ->filters([
-                Tables\Filters\TrashedFilter::make()
+                TrashedFilter::make()
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make()
+                CreateAction::make()
                     ->label("Neues Gruppenmitglied")
-                    ->before(function (array $data, Tables\Actions\CreateAction $action, RelationManager $livewire) {
+                    ->before(function (array $data, CreateAction $action, RelationManager $livewire) {
                         if ($livewire->ownerRecord->groupmembers()->where("email", $data['email'])->first()) {
                             Notification::make()
                                 ->warning()
@@ -147,8 +160,8 @@ class GroupmembersRelationManager extends RelationManager
                     })
                     ->slideOver(),
             ])
-            ->actions([
-                Tables\Actions\DeleteAction::make()
+            ->recordActions([
+                DeleteAction::make()
                     ->modalHeading('Gruppenmitglied löschen')
                     ->modalDescription("Gruppenmitglied wirklich löschen? Das löscht die Adresse aus allen Anwendungen und kann nicht rückgängig gemacht werden")
                     ->modalSubmitActionLabel('Ja')
@@ -166,9 +179,9 @@ class GroupmembersRelationManager extends RelationManager
                             $MailmanHelper->update_membership($record);
                         }
                     }),
-                Tables\Actions\ForceDeleteAction::make()->label("Endgültig löschen"),
-                Tables\Actions\RestoreAction::make()->label("Wiederherstellen"),
-                Tables\Actions\Action::make('Genehmigen')
+                ForceDeleteAction::make()->label("Endgültig löschen"),
+                RestoreAction::make()->label("Wiederherstellen"),
+                \Filament\Actions\Action::make('Genehmigen')
                     ->icon('heroicon-m-face-smile')
                     ->requiresConfirmation()
                     ->label("Genehmigen")
@@ -188,7 +201,7 @@ class GroupmembersRelationManager extends RelationManager
                         if($groupmember->waitingforjoin && (in_array("Administrator", $user->roles()) || ($this->getOwnerRecord()->moderated && $keycloakhelper->is_groupadmin($this->getOwnerRecord(), $user->email)))) return true;
                         else return false;
                     }),
-                Tables\Actions\Action::make('Ablehnen')
+                \Filament\Actions\Action::make('Ablehnen')
                     ->icon('heroicon-m-face-frown')
                     ->requiresConfirmation()
                     ->label("Ablehnen")
@@ -209,11 +222,11 @@ class GroupmembersRelationManager extends RelationManager
                     }),
 
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                    Tables\Actions\RestoreBulkAction::make(),
-                    Tables\Actions\ForceDeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                    RestoreBulkAction::make(),
+                    ForceDeleteBulkAction::make(),
                 ]),
             ])
             ->modifyQueryUsing(fn (Builder $query) => $query->withoutGlobalScopes([
