@@ -20,11 +20,13 @@ yarn-error.log
 /.vscode
 public/css/filament/filament/app.css
 public/css/filament/forms/forms.css
+public/css/filament/support/support.css
 public/js/filament/filament/app.js
 public/js/filament/filament/echo.js
 public/js/filament/forms/components/color-picker.js
 public/js/filament/forms/components/date-time-picker.js
 public/js/filament/forms/components/file-upload.js
+public/js/filament/forms/components/key-value.js
 public/js/filament/forms/components/markdown-editor.js
 public/js/filament/forms/components/rich-editor.js
 public/js/filament/forms/components/select.js
