@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5c7719afb6f7181df628966417c8f770",
+    "content-hash": "05adf14390e78dafb3269521801c9c2a",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -2020,6 +2020,57 @@
             "time": "2025-08-22T14:27:06+00:00"
         },
         {
+            "name": "heloufir/filament-keycloak-sso",
+            "version": "2.0.0",
+            "dist": {
+                "type": "zip",
+                "url": "https://filament-keycloak-sso.composer.sh/download/9fa2244d-2077-420f-8a73-769b8ccb409c/filament-keycloak-2.0.0.zip",
+                "reference": "de3d2f96461f09364eb4e29636f5ab50b9216cda",
+                "shasum": "31f47569b1323b390f25432585f04c5d6934358a"
+            },
+            "require": {
+                "filament/filament": "^4.0",
+                "guzzlehttp/guzzle": "^7.9",
+                "league/oauth2-client": "^2.8",
+                "livewire/livewire": "^3.6",
+                "php": "^8.2"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Heloufir\\FilamentKeycloakSso\\FilamentKeycloakSsoProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Heloufir\\FilamentKeycloakSso\\": "src/"
+                }
+            },
+            "authors": [
+                {
+                    "name": "EL OUFIR Hatim",
+                    "role": "Developer",
+                    "email": "eloufirhatim@gmail.com"
+                }
+            ],
+            "description": "SSO Plugin to manage authentication and permissions based on Keycloak provider",
+            "homepage": "https://github.com/heloufir/filament-keycloak-sso",
+            "keywords": [
+                "authentication",
+                "filament",
+                "oidc",
+                "permissions",
+                "sso"
+            ],
+            "support": {
+                "issues": "https://github.com/heloufir/filament-keycloak-sso/issues",
+                "source": "https://github.com/heloufir/filament-keycloak-sso"
+            },
+            "time": "2025-08-14T16:03:47+00:00"
+        },
+        {
             "name": "kirschbaum-development/eloquent-power-joins",
             "version": "4.2.9",
             "source": {
@@ -2950,6 +3001,71 @@
                 }
             ],
             "time": "2024-09-21T08:32:55+00:00"
+        },
+        {
+            "name": "league/oauth2-client",
+            "version": "2.8.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/thephpleague/oauth2-client.git",
+                "reference": "9df2924ca644736c835fc60466a3a60390d334f9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/thephpleague/oauth2-client/zipball/9df2924ca644736c835fc60466a3a60390d334f9",
+                "reference": "9df2924ca644736c835fc60466a3a60390d334f9",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "guzzlehttp/guzzle": "^6.5.8 || ^7.4.5",
+                "php": "^7.1 || >=8.0.0 <8.5.0"
+            },
+            "require-dev": {
+                "mockery/mockery": "^1.3.5",
+                "php-parallel-lint/php-parallel-lint": "^1.4",
+                "phpunit/phpunit": "^7 || ^8 || ^9 || ^10 || ^11",
+                "squizlabs/php_codesniffer": "^3.11"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "League\\OAuth2\\Client\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Alex Bilbie",
+                    "email": "hello@alexbilbie.com",
+                    "homepage": "http://www.alexbilbie.com",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Woody Gilk",
+                    "homepage": "https://github.com/shadowhand",
+                    "role": "Contributor"
+                }
+            ],
+            "description": "OAuth 2.0 Client Library",
+            "keywords": [
+                "Authentication",
+                "SSO",
+                "authorization",
+                "identity",
+                "idp",
+                "oauth",
+                "oauth2",
+                "single sign on"
+            ],
+            "support": {
+                "issues": "https://github.com/thephpleague/oauth2-client/issues",
+                "source": "https://github.com/thephpleague/oauth2-client/tree/2.8.1"
+            },
+            "time": "2025-02-26T04:37:30+00:00"
         },
         {
             "name": "league/uri",
