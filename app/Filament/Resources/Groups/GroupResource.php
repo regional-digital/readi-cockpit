@@ -33,6 +33,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Forms\Components\Section;
 use Illuminate\Support\Facades\Auth;
 use App\KeycloakHelper;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Model;
 use Livewire\Component as Livewire;
 
@@ -40,7 +41,7 @@ class GroupResource extends Resource
 {
     protected static ?string $model = Group::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | \BackedEnum | null $navigationIcon = Heroicon::UserGroup;
 
     protected static ?string $modelLabel = 'Gruppe';
     protected static ?string $pluralModelLabel = 'Gruppen';
