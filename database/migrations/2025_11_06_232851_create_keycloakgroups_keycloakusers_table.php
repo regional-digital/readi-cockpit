@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('keycloakgroups_keycloakusers', function (Blueprint $table) {
+        Schema::create('keycloakgroups_keycloakusers', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
             $table->foreignIdFor(Keycloakgroup::class);
