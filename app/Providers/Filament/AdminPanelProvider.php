@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use AlexanderGabriel\FilamentOauth2\FilamentOauth2Plugin;
 use Filament\Pages\Dashboard;
 use Filament\Widgets\AccountWidget;
 use Filament\Widgets\FilamentInfoWidget;
@@ -60,6 +61,7 @@ class AdminPanelProvider extends PanelProvider
                 Authenticate::class,
             ])
             ->plugins([
+                new FilamentOauth2Plugin()
             ])
             ->maxContentWidth(Width::FitContent);
     }
