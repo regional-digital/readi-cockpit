@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Filament\Resources\ArticleResource\Pages;
+namespace App\Filament\Resources\Articles\Pages;
 
-use App\Filament\Resources\ArticleResource;
+use Filament\Actions\CreateAction;
+use App\Filament\Resources\Articles\ArticleResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
@@ -13,7 +14,7 @@ class ListArticles extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            CreateAction::make(),
         ];
     }
 }

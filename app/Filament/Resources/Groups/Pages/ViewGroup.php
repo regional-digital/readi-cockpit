@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Filament\Resources\GroupResource\Pages;
+namespace App\Filament\Resources\Groups\Pages;
 
-use App\Filament\Resources\GroupResource;
+use Filament\Actions\EditAction;
+use App\Filament\Resources\Groups\GroupResource;
 use App\KeycloakHelper;
 use App\Mail\UserWaitingForJoin;
 use Filament\Actions;
@@ -89,7 +90,7 @@ class ViewGroup extends ViewRecord
                     }
                 })
                 ->icon('heroicon-m-globe-alt')  ,
-            Actions\EditAction::make(),
+            EditAction::make(),
         ];
     }
 }

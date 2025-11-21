@@ -2,7 +2,8 @@
 
 namespace App\Mail;
 
-use App\Filament\Resources\GroupResource;
+use Illuminate\Mail\Mailables\Attachment;
+use App\Filament\Resources\Groups\GroupResource;
 use App\Models\Groupmember;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -50,7 +51,7 @@ class JoinApproved extends Mailable
     /**
      * Get the attachments for the message.
      *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
+     * @return array<int, Attachment>
      */
     public function attachments(): array
     {

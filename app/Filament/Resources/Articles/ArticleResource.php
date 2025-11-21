@@ -1,7 +1,17 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\Resources\Articles;
 
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Actions\ViewAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use App\Filament\Resources\Articles\Pages\ListArticles;
+use App\Filament\Resources\Articles\Pages\CreateArticle;
+use App\Filament\Resources\Articles\Pages\ViewArticle;
+use App\Filament\Resources\Articles\Pages\EditArticle;
 use App\Filament\Resources\ArticleResource\Pages;
 use App\Filament\Resources\ArticleResource\RelationManagers;
 use App\Models\Article;
@@ -9,7 +19,6 @@ use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -20,12 +29,12 @@ class ArticleResource extends Resource
 {
     protected static ?string $model = Article::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-paper-clip';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-paper-clip';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('name')->required(),
                 TextInput::make('title')->required(),
                 TextInput::make('sort')->numeric(),
@@ -38,35 +47,35 @@ class ArticleResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('name')
+                TextColumn::make('name')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('title')
+                TextColumn::make('title')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('sort')
+                TextColumn::make('sort')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('date')
+                TextColumn::make('date')
                     ->date()
                     ->sortable(),
             ])
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                ViewAction::make(),
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -81,10 +90,10 @@ class ArticleResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListArticles::route('/'),
-            'create' => Pages\CreateArticle::route('/create'),
-            'view' => Pages\ViewArticle::route('/{record}'),
-            'edit' => Pages\EditArticle::route('/{record}/edit'),
+            'index' => ListArticles::route('/'),
+            'create' => CreateArticle::route('/create'),
+            'view' => ViewArticle::route('/{record}'),
+            'edit' => EditArticle::route('/{record}/edit'),
         ];
     }
 }

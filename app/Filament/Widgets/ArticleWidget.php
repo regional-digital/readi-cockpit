@@ -8,7 +8,7 @@ use Filament\Widgets\Widget;
 
 class ArticleWidget extends Widget
 {
-    protected static string $view = 'filament.widgets.article-widget';
+    protected string $view = 'filament.widgets.article-widget';
     protected int | string | array $columnSpan = 2;
 
     public Collection $articles;

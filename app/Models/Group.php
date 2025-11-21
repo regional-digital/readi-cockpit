@@ -41,7 +41,7 @@ class Group extends Model
     /**
      * Get all of the comments for the Group
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return HasMany
      */
     public function groupmembers(): HasMany
     {

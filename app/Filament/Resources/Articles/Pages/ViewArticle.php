@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Filament\Resources\ArticleResource\Pages;
+namespace App\Filament\Resources\Articles\Pages;
 
-use App\Filament\Resources\ArticleResource;
+use Filament\Actions\EditAction;
+use App\Filament\Resources\Articles\ArticleResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ViewRecord;
 
@@ -13,7 +14,7 @@ class ViewArticle extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\EditAction::make(),
+            EditAction::make(),
         ];
     }
 }

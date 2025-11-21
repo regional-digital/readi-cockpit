@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Filament\Resources\GroupResource\Pages;
+namespace App\Filament\Resources\Groups\Pages;
 
-use App\Filament\Resources\GroupResource;
+use Filament\Actions\CreateAction;
+use App\Filament\Resources\Groups\GroupResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
@@ -13,7 +14,7 @@ class ListGroups extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            CreateAction::make(),
         ];
     }
 }
