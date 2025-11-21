@@ -9,11 +9,12 @@ use Illuminate\Notifications\Notifiable;
 use Heloufir\FilamentKeycloakSso\Helpers\HasKeycloakRoles;
 use Filament\Panel;
 use Filament\Models\Contracts\FilamentUser;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends Authenticatable implements FilamentUser
 {
     use HasFactory, Notifiable;
-    use HasKeycloakRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -52,5 +53,10 @@ class User extends Authenticatable implements FilamentUser
     public function canAccessPanel(Panel $panel): bool
     {
         return true;
+    }
+
+    public function roles(): BelongsToMany
+    {
+        return parent::belongsToMany(Role::class);
     }
 }
