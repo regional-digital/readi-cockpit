@@ -4,6 +4,7 @@ use GuzzleHttp\Client;
 use App\Models\Groupmember;
 use App\Models\Group;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 class KeycloakHelper {
 
@@ -62,8 +63,12 @@ class KeycloakHelper {
     }
 
     public static function get_groupselectoptions() {
+        if(Cache::get("get_groupselectoptions")) {
+            return json_decode(Cache::get("get_groupselectoptions"), true);
+        }
         $KeycloakHelper = new KeycloakHelper();
         $groups = $KeycloakHelper->get_groups();
+        Cache::add("get_groupselectoptions", json_encode($groups), now()->addSeconds((int)env('CACHE_TIME', 600)));
         return $groups;
     }
 
@@ -79,29 +84,41 @@ class KeycloakHelper {
 
     public function get_keycloakgroupmembers(String $kc_group)
     {
+        if(Cache::get("get_keycloakgroupmembers".md5($kc_group))) {
+            return json_decode(Cache::get("get_keycloakgroupmembers".md5($kc_group)));
+        }
         $res = $this->client->request('GET', env('KEYCLOAK_BASE_URL')."/admin/realms/".env('KEYCLOAK_REALM')."/groups/$kc_group/members", ['headers' => $this->headers]);
         $kc_groupmembers = json_decode($res->getBody());
         $groupmembers = array();
         foreach($kc_groupmembers as $kc_groupmember) {
             array_push($groupmembers, $kc_groupmember->email);
         }
+        Cache::add("is_Groupadmin".md5($kc_group), json_encode($groupmembers), now()->addSeconds((int)env('CACHE_TIME', 600)));
         return $groupmembers;
     }
 
 
     public function is_groupadmin(Group $group, String $email): bool
     {
+        if(Cache::get("is_Groupadmin".md5($group.$email))) {
+            return Cache::get("is_Groupadmin".md5($group.$email));
+        }
         $kc_admingroup = $group->keycloakadmingroup;
         $kc_user = $this->get_useridbymail($email);
         $res = $this->client->request('GET', env('KEYCLOAK_BASE_URL')."/admin/realms/".env('KEYCLOAK_REALM')."/users/$kc_user/groups", ['headers' => $this->headers]);
         $kc_groups = json_decode($res->getBody());
         foreach($kc_groups as $kc_group) {
+            Cache::add("is_Groupadmin".md5($group.$email), true, now()->addSeconds((int)env('CACHE_TIME', 600)));
             if($kc_group->id == $kc_admingroup) return true;
         }
+        Cache::add("is_Groupadmin".md5($group.$email), false, now()->addSeconds((int)env('CACHE_TIME', 600)));
         return false;
     }
 
     private function get_useridbymail($email) {
+        if(Cache::get("get_useridbymail".md5($email))) {
+            return Cache::get("get_useridbymail".md5($email));
+        }
         $res = $this->client->request('GET', env('KEYCLOAK_BASE_URL').'/admin/realms/'.env('KEYCLOAK_REALM').'/users?email='.$email, ['headers' => $this->headers]);
         $kc_users = json_decode($res->getBody());
         $foundKcUser = false;
@@ -112,10 +129,16 @@ class KeycloakHelper {
             }
         }
         if(!$foundKcUser) return $foundKcUser;
-        else return $kc_user_id;
+        else {
+            Cache::add("get_useridbymail".md5($email), $kc_user_id, now()->addSeconds((int)env('CACHE_TIME', 600)));
+            return $kc_user_id;
+        }
     }
 
     public function update_membership(Groupmember $groupmember) {
+        if(Cache::get("update_membership".md5($groupmember))) {
+            return Cache::get("update_membership".md5($groupmember));
+        }
         $group = $groupmember->group;
         $kc_groupid = $group->keycloakgroup;
         $email = $groupmember->email;
@@ -131,20 +154,27 @@ class KeycloakHelper {
             $this->client->delete(env('KEYCLOAK_BASE_URL').'/admin/realms/'.env('KEYCLOAK_REALM').'/users/'.$kc_user_id.'/groups/'.$kc_groupid, ['headers' => $this->headers]);
         }
         else {
+            Cache::add("update_membership".md5($email), false, now()->addSeconds((int)env('CACHE_TIME', 600)));
             return false;
         }
+        Cache::add("update_membership".md5($email), true, now()->addSeconds((int)env('CACHE_TIME', 600)));
         return true;
     }
 
     public function user_exists($email) {
+        if(Cache::get("user_exists".md5($email))) {
+            return Cache::get("user_exists".md5($email));
+        }
         $res = $this->client->request('GET', env('KEYCLOAK_BASE_URL').'/admin/realms/'.env('KEYCLOAK_REALM').'/users?email='.$email, ['headers' => $this->headers]);
         $kc_users = json_decode($res->getBody());
         $foundKcUser = false;
         foreach($kc_users as $kc_user) {
             if($kc_user->email == $email) {
+                Cache::add("user_exists".md5($email), true, now()->addSeconds((int)env('CACHE_TIME', 600)));
                 $foundKcUser = true;
             }
         }
+        Cache::add("user_exists".md5($email), false, now()->addSeconds((int)env('CACHE_TIME', 600)));
         return $foundKcUser;
     }
 

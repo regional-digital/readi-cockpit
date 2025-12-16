@@ -39,8 +39,9 @@ class GroupPolicy
      */
     public function update(User $user, Group $group): bool
     {
+        if(in_array("Administrator", $user->roles()->get()->pluck("name")->toArray()) ) return true;
         $keycloakhelper = new KeycloakHelper();
-        if(in_array("Administrator", $user->roles()->get()->pluck("name")->toArray()) || $keycloakhelper->is_groupadmin($group, $user->email)) return true;
+        if($keycloakhelper->is_groupadmin($group, $user->email)) return true;
         else return false;
     }
 

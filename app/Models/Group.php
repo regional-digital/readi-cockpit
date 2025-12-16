@@ -30,9 +30,7 @@ class Group extends Model
         , "mailinglisturl"
         , "keycloakgroup"
         , "keycloakadmingroup"
-
     ];
-
 
     /**
      * Get all of the comments for the Group
@@ -144,7 +142,7 @@ class Group extends Model
             $this->groupmembers()->save($groupmember);
         }
 
-        Cache::add("updateGroupMembers_".$this->name."_last_update", 1, now()->addSeconds(10));
+        Cache::add("updateGroupMembers_".$this->name."_last_update", 1, now()->addSeconds((int)env('CACHE_TIME', 600)));
     }
 
 }

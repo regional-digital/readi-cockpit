@@ -38,9 +38,12 @@ class GroupmemberPolicy
      */
     public function update(User $user, Groupmember $groupmember): bool
     {
-        $keycloakhelper = new KeycloakHelper();
-        if(!in_array("Administrator", $user->roles()->get()->pluck("name")->toArray()) && !$keycloakhelper->is_groupadmin($groupmember->group, $user->email) && $user->email !== $groupmember->email) {
-            return false;
+        if(!in_array("Administrator", $user->roles()->get()->pluck("name")->toArray())) {
+            $keycloakhelper = new KeycloakHelper();
+            if(!$keycloakhelper->is_groupadmin($groupmember->group, $user->email) && $user->email !== $groupmember->email) {
+                return false;
+            }
+            else return true;
         }
         else {
             return true;
@@ -52,11 +55,14 @@ class GroupmemberPolicy
      */
     public function delete(User $user, Groupmember $groupmember): bool
     {
-        $keycloakhelper = new KeycloakHelper();
-        if($user->email == $groupmember->email || in_array("Administrator", $user->roles()->get()->pluck("name")->toArray()) || $keycloakhelper->is_groupadmin($groupmember->group, $user->email)) {
+        if($user->email == $groupmember->email || in_array("Administrator", $user->roles()->get()->pluck("name")->toArray())) {
             return true;
         }
         else {
+            $keycloakhelper = new KeycloakHelper();
+            if($keycloakhelper->is_groupadmin($groupmember->group, $user->email)) {
+                return true;
+            }
             return false;
         }
     }
@@ -66,9 +72,12 @@ class GroupmemberPolicy
      */
     public function restore(User $user, Groupmember $groupmember): bool
     {
-        $keycloakhelper = new KeycloakHelper();
-        if(in_array("Administrator", $user->roles()->get()->pluck("name")->toArray()) || $keycloakhelper->is_groupadmin($groupmember->group, $user()->email)) return true;
-        else return false;
+        if(in_array("Administrator", $user->roles()->get()->pluck("name")->toArray())) return true;
+        else {
+            $keycloakhelper = new KeycloakHelper();
+            if($keycloakhelper->is_groupadmin($groupmember->group, $user()->email)) return true;
+            else return false;
+        }
     }
 
     /**
@@ -76,8 +85,11 @@ class GroupmemberPolicy
      */
     public function forceDelete(User $user, Groupmember $groupmember): bool
     {
-        $keycloakhelper = new KeycloakHelper();
-        if(in_array("Administrator", $user->roles()->get()->pluck("name")->toArray()) || $keycloakhelper->is_groupadmin($groupmember->group, $user()->email)) return true;
-        else return false;
+        if(in_array("Administrator", $user->roles()->get()->pluck("name")->toArray())) return true;
+        else {
+            $keycloakhelper = new KeycloakHelper();
+            if($keycloakhelper->is_groupadmin($groupmember->group, $user()->email)) return true;
+            else return false;
+        }
     }
 }
