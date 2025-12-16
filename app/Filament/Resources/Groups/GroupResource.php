@@ -33,6 +33,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Forms\Components\Section;
 use Illuminate\Support\Facades\Auth;
 use App\KeycloakHelper;
+use Filament\Schemas\Components\Fieldset;
 use Illuminate\Database\Eloquent\Model;
 use Livewire\Component as Livewire;
 
@@ -51,13 +52,11 @@ class GroupResource extends Resource
     {
         return $schema
             ->components([
+                Fieldset::make("Gruppen-Infos")->schema([
                     TextInput::make('name')
                         ->required(),
                     TextInput::make('description')
-                        ->columnSpan(2)
                         ->label("Beschreibung"),
-                    Toggle::make('moderated')
-                        ->label("Gruppe ist moderiert"),
                     Select::make('grouptype')
                         ->label("Gruppentyp")
                         ->options([
@@ -70,17 +69,10 @@ class GroupResource extends Resource
                     TextInput::make('url')
                         ->label("URL")
                         ->prefix('https://'),
-                    Toggle::make('has_mailinglist')
-                        ->label("Hat eine Mailingliste"),
-                    TextInput::make('mailinglisturl')
-                        ->label("Mailinglisten-URL")
-                        ->requiredIf('has_mailinglist', true),
-                    TextInput::make('mailinglistpassword')
-                        ->label("Mailinglisten-Passwort")
-                        ->dehydrated(fn ($state) => filled($state))
-                        ->password(),
-                    Toggle::make('has_keycloakgroup')
-                        ->label("Hat eine Keycloak-Gruppe"),
+                    Toggle::make('moderated')
+                        ->label("Gruppe ist moderiert"),
+                ]),
+                Fieldset::make("Keycloak-Gruppe")->schema([
                     Select::make('keycloakgroup')
                         ->options(KeycloakHelper::get_groupselectoptions())
                         ->requiredIf('has_keycloakgroup', true)
@@ -89,7 +81,17 @@ class GroupResource extends Resource
                         ->options(KeycloakHelper::get_groupselectoptions())
                         ->requiredIf('moderated', true)
                         ->searchable(),
-                ])->columns(3);
+                    Toggle::make('has_keycloakgroup')
+                        ->label("Hat eine Keycloak-Gruppe"),
+                ]),
+                Fieldset::make("Mailingliste")->schema([
+                    TextInput::make('mailinglisturl')
+                        ->label("Mailinglisten-URL")
+                        ->requiredIf('has_mailinglist', true),
+                    Toggle::make('has_mailinglist')
+                        ->label("Hat eine Mailingliste"),
+                ])->columns(1),
+            ]);
     }
 
     public static function table(Table $table): Table
