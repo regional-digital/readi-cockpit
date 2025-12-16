@@ -10,7 +10,7 @@ class MailmanHelper {
     public function get_mailmanmembers(Group $group): array
     {
         try {
-            $mailmanapi = new MailmanAPI($group->mailinglisturl, $group->mailinglistpassword);
+            $mailmanapi = new MailmanAPI($group->mailinglisturl, env('MAILMAN_ADMIN_PW'));
         } catch (Exception $e) {
             Notification::make()
                 ->title('Gruppe konnte auf Mailman nicht abgefragt werden. Deaktiviere Mailman-Feature.')
@@ -26,14 +26,14 @@ class MailmanHelper {
 
     private function remove_mailmanmember(Groupmember $groupmember): bool
     {
-        $mailmanapi = new MailmanAPI($groupmember->group->mailinglisturl, $groupmember->group->mailinglistpassword);
+        $mailmanapi = new MailmanAPI($groupmember->group->mailinglisturl, env('MAILMAN_ADMIN_PW'));
         $mailmanapi->removeMembers([$groupmember->email]);
         return true;
     }
 
     private function add_mailmanmember(Groupmember $groupmember): bool
     {
-        $mailmanapi = new MailmanAPI($groupmember->group->mailinglisturl, $groupmember->group->mailinglistpassword);
+        $mailmanapi = new MailmanAPI($groupmember->group->mailinglisturl, env('MAILMAN_ADMIN_PW'));
         $mailmanapi->addMembers([$groupmember->email]);
         return true;
     }

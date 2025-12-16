@@ -28,15 +28,11 @@ class Group extends Model
         , "has_mailinglist"
         , "has_keycloakgroup"
         , "mailinglisturl"
-        , "mailinglistpassword"
         , "keycloakgroup"
         , "keycloakadmingroup"
-        , "mailinglistpassword"
+
     ];
 
-    protected $hidden = [
-        'mailinglistpassword'
-    ];
 
     /**
      * Get all of the comments for the Group

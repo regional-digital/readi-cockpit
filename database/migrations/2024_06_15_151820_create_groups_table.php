@@ -21,7 +21,6 @@ return new class extends Migration
             $table->boolean("has_mailinglist")->nullable();
             $table->boolean("has_keycloakgroup")->nullable();
             $table->string("mailinglisturl")->nullable();
-            $table->string("mailinglistpassword")->nullable();
             $table->string("keycloakgroup")->nullable();
             $table->string("keycloakadmingroup")->nullable();
         });
