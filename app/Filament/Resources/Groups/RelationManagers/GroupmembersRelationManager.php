@@ -83,7 +83,7 @@ class GroupmembersRelationManager extends RelationManager
                         $keycloakhelper = new KeycloakHelper();
                         $user = User::where('email', Auth::user()->email)->first();
                         if(!$keycloakhelper->user_exists($record->email)) return true;
-                        if(!in_array("Administrator", $user->roles()) && !$keycloakhelper->is_groupadmin($this->getOwnerRecord(), $user->email) && $user->email !== $record->email) {
+                        if(!in_array("Administrator", $user->roles()->get()->pluck("name")->toArray()) && !$keycloakhelper->is_groupadmin($this->getOwnerRecord(), $user->email) && $user->email !== $record->email) {
                             return true;
                         }
                         else {
@@ -108,7 +108,7 @@ class GroupmembersRelationManager extends RelationManager
                         }
                     )
                     ->visible(function() {
-                        if(!$this->getOwnerRecord()->has_mailinglist && $this->getOwnerRecord()->mailinglisturl != null && $this->getOwnerRecord()->mailinglistpassword != null) {
+                        if(!$this->getOwnerRecord()->has_mailinglist && $this->getOwnerRecord()->mailinglisturl != null && env('MAILMAN_ADMIN_PW') != null) {
                             return false;
                         }
                         else return true;
@@ -118,7 +118,7 @@ class GroupmembersRelationManager extends RelationManager
                         if($record->waitingforjoin) return true;
                         $keycloakhelper = new KeycloakHelper();
                         $user = User::where('email', Auth::user()->email)->first();
-                        if(!in_array("Administrator", $user->roles()) && !$keycloakhelper->is_groupadmin($this->getOwnerRecord(), $user->email) && $user->email !== $record->email) {
+                        if(!in_array("Administrator", $user->roles()->get()->pluck("name")->toArray()) && !$keycloakhelper->is_groupadmin($this->getOwnerRecord(), $user->email) && $user->email !== $record->email) {
                             return true;
                         }
                         else {
@@ -198,7 +198,7 @@ class GroupmembersRelationManager extends RelationManager
                     })->visible(function(Groupmember $groupmember) {
                         $keycloakhelper = new KeycloakHelper();
                         $user = User::where('email', Auth::user()->email)->first();
-                        if($groupmember->waitingforjoin && (in_array("Administrator", $user->roles()) || ($this->getOwnerRecord()->moderated && $keycloakhelper->is_groupadmin($this->getOwnerRecord(), $user->email)))) return true;
+                        if($groupmember->waitingforjoin && (in_array("Administrator", $user->roles()->get()->pluck("name")->toArray()) || ($this->getOwnerRecord()->moderated && $keycloakhelper->is_groupadmin($this->getOwnerRecord(), $user->email)))) return true;
                         else return false;
                     }),
                 \Filament\Actions\Action::make('Ablehnen')

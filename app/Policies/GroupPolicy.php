@@ -30,7 +30,7 @@ class GroupPolicy
      */
     public function create(User $user): bool
     {
-        if(in_array("Administrator", $user->roles())) return true;
+        if(in_array("Administrator", $user->roles()->get()->pluck("name")->toArray())) return true;
         else return false;
     }
 
@@ -40,7 +40,7 @@ class GroupPolicy
     public function update(User $user, Group $group): bool
     {
         $keycloakhelper = new KeycloakHelper();
-        if(in_array("Administrator", $user->roles()) || $keycloakhelper->is_groupadmin($group, $user->email)) return true;
+        if(in_array("Administrator", $user->roles()->get()->pluck("name")->toArray()) || $keycloakhelper->is_groupadmin($group, $user->email)) return true;
         else return false;
     }
 
@@ -49,7 +49,7 @@ class GroupPolicy
      */
     public function delete(User $user, Group $group): bool
     {
-        if(in_array("Administrator", $user->roles())) return true;
+        if(in_array("Administrator", $user->roles()->get()->pluck("name")->toArray())) return true;
         else return false;
     }
 
@@ -58,7 +58,7 @@ class GroupPolicy
      */
     public function restore(User $user, Group $group): bool
     {
-        if(in_array("Administrator", $user->roles())) return true;
+        if(in_array("Administrator", $user->roles()->get()->pluck("name")->toArray())) return true;
         else return false;
     }
 
@@ -67,7 +67,7 @@ class GroupPolicy
      */
     public function forceDelete(User $user, Group $group): bool
     {
-        if(in_array("Administrator", $user->roles())) return true;
+        if(in_array("Administrator", $user->roles()->get()->pluck("name")->toArray())) return true;
         else return false;
     }
 }
