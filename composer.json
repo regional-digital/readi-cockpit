@@ -15,7 +15,6 @@
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
-        "filament/upgrade": "^4.0",
         "laravel/pint": "^1.13",
         "laravel/sail": "^1.26",
         "mockery/mockery": "^1.6",
@@ -76,10 +75,6 @@
         {
             "type": "vcs",
             "url": "https://github.com/AlexanderGabriel/mailmanAPI"
-        },
-        {
-            "type": "composer",
-            "url": "https://filament-keycloak-sso.composer.sh"
         }
    ]
 }
