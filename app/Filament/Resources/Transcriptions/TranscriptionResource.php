@@ -18,9 +18,18 @@ class TranscriptionResource extends Resource
 {
     protected static ?string $model = Transcription::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::MusicalNote;
+
+    protected static ?string $modelLabel = 'Transkripierung';
+    protected static ?string $pluralModelLabel = 'Transkripierungen';
 
     protected static ?string $recordTitleAttribute = 'name';
+
+    public static function canAccess(): bool
+    {
+        if(in_array("Administrator", filament()->auth()->user()->roles()->get()->pluck("name")->toArray())) return parent::canAccess();
+        else return false;
+    }
 
     public static function form(Schema $schema): Schema
     {
