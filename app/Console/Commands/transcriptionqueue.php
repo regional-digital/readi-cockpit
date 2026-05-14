@@ -7,10 +7,12 @@ use App\Mail\TranscriptionFinished;
 use App\Models\Transcription;
 use App\Models\TranscriptionState;
 use App\Models\User;
+use Carbon\Carbon;
 use \Illuminate\Support\Facades\File;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
+use Laravel\Prompts\Output\ConsoleOutput;
 
 class transcriptionqueue extends Command
 {
@@ -27,6 +29,14 @@ class transcriptionqueue extends Command
      * @var string
      */
     protected $description = 'Command description';
+
+    private ConsoleOutput $consoleOutput;
+
+    function __construct()
+    {
+        parent::__construct();
+         $this->consoleOutput = new ConsoleOutput();
+    }
 
     /**
      * Execute the console command.
@@ -80,5 +90,11 @@ class transcriptionqueue extends Command
             }
         }
 
+        //Delete transcriptions done longer than 7 days ago
+        $transcriptions = Transcription::where("transcription_state_id", $stateDone->id)->whereDate("updated_at",  "<=", Carbon::now()->subDays(env('KEEP_TRANSCRIPTIONS_DAYS', '7')))->get();
+        foreach($transcriptions as $transcription) {
+            $this->consoleOutput->writeln("<info>Delete transcription with id ".$transcription->id."</info>");
+            $transcription->delete();
+        }
     }
 }
