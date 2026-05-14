@@ -9,6 +9,7 @@ use App\Filament\Resources\Transcriptions\Schemas\TranscriptionForm;
 use App\Filament\Resources\Transcriptions\Tables\TranscriptionsTable;
 use App\Models\Transcription;
 use BackedEnum;
+use Filament\Facades\Filament;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -27,7 +28,7 @@ class TranscriptionResource extends Resource
 
     public static function canAccess(): bool
     {
-        if(in_array("Administrator", filament()->auth()->user()->roles()->get()->pluck("name")->toArray())) return parent::canAccess();
+        if(in_array("Administrator", Filament::auth()->user()->roles()->get()->pluck("name")->toArray())) return parent::canAccess();
         else return false;
     }
 

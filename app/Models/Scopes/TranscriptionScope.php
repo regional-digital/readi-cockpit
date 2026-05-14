@@ -2,6 +2,7 @@
 
 namespace App\Models\Scopes;
 
+use Filament\Facades\Filament;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Scope;
@@ -13,8 +14,8 @@ class TranscriptionScope implements Scope
      */
     public function apply(Builder $builder, Model $model): void
     {
-        if(filament()->auth()->user()) {
-            $builder->where('user_id', filament()->auth()->user()->id);
+        if(Filament::auth()->id()) {
+            $builder->where('user_id', Filament::auth()->id());
         }
     }
 }

@@ -15,7 +15,7 @@ class CreateTranscription extends CreateRecord
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         $data['user_id'] = Filament::auth()->id();
-        $data['transcription_state_id'] = TranscriptionState::where("name", "=", "uploaded")->first()->id;
+        $data['transcription_state_id'] = TranscriptionState::where("name", "=", "uploaded")->first()->id();
         return $data;
     }
 
