@@ -21,6 +21,7 @@ class TranscriptionFinished extends Mailable
      */
     public function __construct(
          public Transcription $transcription,
+         public string $filename,
     )
     {
         //
@@ -43,7 +44,7 @@ class TranscriptionFinished extends Mailable
     {
         $this->url = TranscriptionResource::getUrl('edit', ['record' => $this->transcription->id]);
         return new Content(
-            view: 'mail.transcriptionFinished',
+            markdown: 'mail.transcriptionFinished',
         );
     }
 
@@ -54,6 +55,6 @@ class TranscriptionFinished extends Mailable
      */
     public function attachments(): array
     {
-        return [];
+        return [$this->filename];
     }
 }

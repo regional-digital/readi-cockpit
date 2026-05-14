@@ -75,7 +75,7 @@ class transcriptionqueue extends Command
 
                 //Mail mit Downloadlink versenden
                 $user = User::find($transcription->user_id);
-                Mail::to($user)->send(new TranscriptionFinished($transcription));
+                Mail::to($user)->send(new TranscriptionFinished($transcription, $destination));
 
             }
         }
