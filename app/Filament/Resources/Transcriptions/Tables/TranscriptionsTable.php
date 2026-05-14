@@ -31,15 +31,6 @@ class TranscriptionsTable
                     ->searchable(),
                 TextColumn::make('transcription_state.name')
                     ->searchable(),
-                TextColumn::make('upload_time')
-                    ->dateTime()
-                    ->sortable(),
-                TextColumn::make('start_time')
-                    ->dateTime()
-                    ->sortable(),
-                TextColumn::make('end_time')
-                    ->dateTime()
-                    ->sortable(),
             ])
             ->filters([
                 //

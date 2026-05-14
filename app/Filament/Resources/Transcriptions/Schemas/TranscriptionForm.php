@@ -20,11 +20,10 @@ class TranscriptionForm
         return $schema
             ->components([
                 TextInput::make('description')->label("Beschreibung")->required(),
-                Select::make("transcription_state_id")->relationship("transcription_state", "title")->disabledOn(["edit"])->visibleOn("edit"),
-                Select::make("user_id")->relationship("user", "name")->disabledOn(["edit"])->visibleOn("edit")->default(Filament::auth()->id()),
-                DateTimePicker::make("upload_time")->disabledOn(["edit"])->visibleOn("edit"),
-                DateTimePicker::make("start_time")->disabledOn(["edit"])->visibleOn("edit"),
-                DateTimePicker::make("end_time")->disabledOn(["edit"])->visibleOn("edit"),
+                Select::make("transcription_state_id")->relationship("transcription_state", "title")->disabledOn(["edit"])->visibleOn("edit")->label('Status'),
+                DateTimePicker::make("created_at")->disabledOn(["edit"])->visibleOn("edit")->label('Erstellt'),
+                DateTimePicker::make("updated_at")->disabledOn(["edit"])->visibleOn("edit")->label('Aktualisiert'),
+                Select::make("user_id")->relationship("user", "name")->disabledOn(["edit"])->visibleOn("edit")->default(Filament::auth()->id())->columnSpan(2)->label('Hochgeladen von'),
                 FileUpload::make('attachment')->storeFileNamesIn('attachment_filename')->disabledOn("edit")->visible(function(Get $get) {
                     $stateDone = TranscriptionState::where("name", "done")->first();
                     return (!$get("transcription_state_id") == $stateDone->id);
