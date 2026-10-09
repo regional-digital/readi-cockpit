@@ -16,14 +16,70 @@ Die erste Version wurde von [Alexander Gabriel](https://www.digital-infinity.de/
 
 # Transkripierung
 
-Damit das Ausspielen, Einsammeln und Löschen der Transkripierungen funktioniert muss der Scheduler laufen:
+Die MP3s werden nicht mehr über Verzeichnisse ausgetauscht. Der Whisper-Server holt sich die Aufträge per API ab und lädt die Ergebnisse per `curl` (oder `wget`) wieder hoch.
+
+Ablauf:
+
+1. User lädt eine MP3 hoch → Status `hochgeladen`.
+2. Whisper-Server ruft `POST /api/whisper/jobs/next` auf und bekommt den ältesten Auftrag → Status `geplant`.
+3. Whisper-Server lädt die MP3 über `GET /api/whisper/jobs/{id}/audio` herunter und transkribiert sie.
+4. Whisper-Server lädt das Ergebnis als .zip über `POST /api/whisper/jobs/{id}/result` hoch → Status `erledigt`, der User bekommt eine Mail mit der .zip im Anhang.
+
+Bleibt ein Auftrag länger als `WHISPER_JOB_TIMEOUT_HOURS` (Standard 12) auf `geplant` (z.B. weil whisper abgestürzt ist), wird er beim nächsten `next` erneut ausgegeben.
+
+Der Scheduler wird nur noch zum Löschen erledigter Transkripierungen nach `KEEP_TRANSCRIPTIONS_DAYS` Tagen benötigt:
 
 ```
 php artisan schedule:work
 ```
-Transkripierungen werden nach dem Upload vom Scheduler in das Verzeichnis storage/app/private/output gelegt.  
-Die .ZIP-Datei muss genauso heißen wie die MP3 aber halt .zip statt .mp3.  
-Danach wird die .zip eingesammelt, der Datensatz aktualisiert, der User per Mail informiert, dass die Transkripierung fertig ist und in der Mail ist dann auch die .zip-Dateie.
+
+### Konfiguration
+
+In der `.env` des Cockpits ein langes, zufälliges Token setzen (z.B. `openssl rand -hex 32`). Ohne Token ist die API gesperrt.
+
+```
+WHISPER_API_TOKEN=geheimes-token
+WHISPER_JOB_TIMEOUT_HOURS=12
+```
+
+### API
+
+Alle Aufrufe brauchen den Header `Authorization: Bearer <WHISPER_API_TOKEN>`, sonst kommt `401`.
+
+| Methode & Pfad | Antwort |
+| --- | --- |
+| `POST /api/whisper/jobs/next` | `200` mit `{"id":1,"name":"abc","audio_url":"…","result_url":"…"}` oder `204`, wenn nichts zu tun ist |
+| `GET /api/whisper/jobs/{id}/audio` | die MP3 (`404`, wenn die Datei fehlt) |
+| `POST /api/whisper/jobs/{id}/result` | Ergebnis-.zip als Multipart-Feld `result` oder als Body mit `Content-Type: application/zip`; `422` ohne Datei |
+
+Beispiele mit curl:
+
+```
+TOKEN=geheimes-token
+API=https://cockpit.example.org/api/whisper/jobs
+
+curl -X POST -H "Authorization: Bearer $TOKEN" -H "Accept: application/json" $API/next
+curl -H "Authorization: Bearer $TOKEN" -o abc.mp3 $API/1/audio
+curl -H "Authorization: Bearer $TOKEN" -H "Accept: application/json" -F "result=@abc.zip" $API/1/result
+```
+
+Oder mit wget:
+
+```
+wget -qO- --post-data="" --header="Authorization: Bearer $TOKEN" $API/next
+wget --header="Authorization: Bearer $TOKEN" -O abc.mp3 $API/1/audio
+wget -qO- --header="Authorization: Bearer $TOKEN" --header="Content-Type: application/zip" --post-file=abc.zip $API/1/result
+```
+
+### Whisper-Server
+
+Auf dem Whisper-Server läuft `whisper_worker.sh` (benötigt `curl`, `ffmpeg`, `whisper`, `zip`). Es arbeitet alle wartenden Aufträge ab und beendet sich dann, z.B. per Cron alle 5 Minuten (`flock` verhindert parallele Läufe):
+
+```
+*/5 * * * * COCKPIT_URL=https://cockpit.example.org WHISPER_API_TOKEN=geheimes-token flock -n /tmp/whisper.lock /opt/whisper_worker.sh
+```
+
+Optional: `WHISPER_MODEL` (Standard `medium`) und `WHISPER_WORK_DIR` (Standard `./whisper_work_dir`).
 
 
 ## Testen mit Whisper lokal
@@ -40,10 +96,10 @@ $ source ./newenv/bin/activate
 (whisper)$ pip install -U openai-whisper
 ```
 
-Test mit whisper lokal:
+Test mit whisper lokal (Cockpit läuft z.B. unter http://localhost:8000):
 
 ```
-bash whisper_work_local.sh
+COCKPIT_URL=http://localhost:8000 WHISPER_API_TOKEN=geheimes-token sh whisper_worker.sh
 ```
 
 

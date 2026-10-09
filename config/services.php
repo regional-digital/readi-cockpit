@@ -35,4 +35,9 @@ return [
         ],
     ],
 
+    'whisper' => [
+        'token' => env('WHISPER_API_TOKEN'),
+        'job_timeout_hours' => env('WHISPER_JOB_TIMEOUT_HOURS', 12),
+    ],
+
 ];

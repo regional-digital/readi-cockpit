@@ -4,22 +4,20 @@ namespace App\Models;
 
 use App\Models\Scopes\TranscriptionScope;
 use App\Observers\TranscriptionObserver;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\ScopedBy;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 #[ObservedBy([TranscriptionObserver::class])]
 #[ScopedBy([TranscriptionScope::class])]
 class Transcription extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
-        "description"
-        , "attachment"
-        , "attachment_filename"
-        , "transcription"
-        , "user_id"
-        , "transcription_state_id"
+        'description', 'attachment', 'attachment_filename', 'transcription', 'user_id', 'transcription_state_id',
     ];
 
     public function user(): BelongsTo
