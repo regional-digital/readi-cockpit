@@ -18,7 +18,6 @@
         "vscode": {
             "extensions": [
                 "jebbs.plantuml",
-                "xdebug.php-pack",
                 "bmewburn.vscode-intelephense-client"
             ]
         }
