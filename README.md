@@ -16,7 +16,19 @@ Die erste Version wurde von [Alexander Gabriel](https://www.digital-infinity.de/
 
 # Transkripierung
 
-Whisper installieren:
+Damit das Ausspielen, Einsammeln und Löschen der Transkripierungen funktioniert muss der Scheduler laufen:
+
+```
+php artisan schedule:work
+```
+Transkripierungen werden nach dem Upload vom Scheduler in das Verzeichnis storage/app/private/output gelegt.  
+Die .ZIP-Datei muss genauso heißen wie die MP3 aber halt .zip statt .mp3.  
+Danach wird die .zip eingesammelt, der Datensatz aktualisiert, der User per Mail informiert, dass die Transkripierung fertig ist und in der Mail ist dann auch die .zip-Dateie.
+
+
+## Testen mit Whisper lokal
+
+### Whisper installieren:
 https://askubuntu.com/questions/837408/convert-speech-mp3-audio-files-to-text
 
 ```
